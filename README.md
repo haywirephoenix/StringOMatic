@@ -3,6 +3,7 @@
 > A continuation of the [work done](https://assetstore.unity.com/packages/tools/utilities/string-o-matic-53019) by Cobo Antonio [with permission](https://forum.unity.com/threads/released-string-o-matic-say-goodbye-to-magic-strings.377123#post-9764475). Pull requests welcome!
 > 
 >#### Planned Features:
+> * Support package manager git url for easy updates
 > * Improved compatibility with newer version of Unity
 > * Text fields to specify the namespace, target directory, and class name.
 > * Filter lists for more categories
@@ -68,4 +69,6 @@
 >
 > * Added a filter list to the Mecanim module
 > * Fix Refresh from reverting animation controller changes
-> * Mechanim module now adds Animator.StringToHash ints 
+> * Mechanim module now adds Animator.StringToHash ints
+> * Fix preferences layout and menuitem. Refresh all shortcut disabled temporarily.
+> * Add github repo button to preferences

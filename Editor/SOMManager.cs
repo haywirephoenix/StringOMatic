@@ -102,9 +102,12 @@ namespace SOM
 		static Vector2 scrollPos;
 		static int selected = -1;
 
+#pragma warning disable CS0618 // Type or member is obsolete
 		[PreferenceItem(PREFERENCES_TAB)]
+#pragma warning restore CS0618 // Type or member is obsolete
 		static void OnPreferences()
 		{
+			GUILayout.Space(40);
 			//Draw Header
 			EditorGUI.DrawPreviewTexture(new Rect(130, 5, 360, 45), header);
 
@@ -183,11 +186,13 @@ namespace SOM
 				Application.OpenURL("http://forum.unity3d.com/threads/string-o-matic-say-goodbye-to-magic-strings.377123/");
 			if (GUILayout.Button("Asset Store page", EditorStyles.miniButton))
 				Application.OpenURL("https://www.assetstore.unity3d.com/#!/content/53019");
+			if (GUILayout.Button("Github Repo", EditorStyles.miniButton))
+				Application.OpenURL("https://github.com/haywirephoenix/StringOMatic/");
 			GUILayout.EndHorizontal();
 			GUILayout.EndVertical();
 		}
 
-		[MenuItem(MENU_TAB + "/Refresh %#r")]
+		// [MenuItem(MENU_TAB + "/Refresh %#r")]
 		public static void RefreshMenu()
 		{
 			RefreshAll();
