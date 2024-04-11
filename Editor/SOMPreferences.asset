@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50a544a21bcbafa4bb812a98bcc73806, type: 3}
+  m_Name: SOMPreferences
+  m_EditorClassIdentifier: 
+  _bools:
+    _names:
+    - Audio Needs Refreshing
+    - Input Needs Refreshing
+    - Layers Needs Refreshing
+    - Mecanim Needs Refreshing
+    - Navigation Needs Refreshing
+    - Resources Needs Refreshing
+    - Rewired Needs Refreshing
+    - Scenes Needs Refreshing
+    - Shaders Needs Refreshing
+    - Sorting Layers Needs Refreshing
+    - Tags Needs Refreshing
+    - Shaders Module Add Builtin Key
+    - Shaders Module Separate Shaders key
+    - Shaders Module Add Properties Key
+    - Shaders Module Add Properties Module Key
+    - Shaders Module Add Custom Key
+    - Rewired Module Add Categories Sufix Key
+    - Rewired Module Add Categories Suffix Key
+    - Rewired Module Group Layouts Key
+    _values: 01010101010101010101010100010101010101
+  _strings:
+    _names: []
+    _values: []
+  _ints:
+    _names:
+    - ResourcesFilterListFilterType
+    - ShadersFilterListFilterType
+    _values: 0100000001000000
+  _floats:
+    _names: []
+    _values: []
