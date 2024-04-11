@@ -249,7 +249,7 @@ namespace SOM
 				}
 
 				//Unload this controller from memory
-				// Resources.UnloadAsset(controllers[i]);
+				/// Resources.UnloadAsset(controllers[i]);
 			}
 		}
 
