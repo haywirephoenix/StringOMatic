@@ -3,12 +3,15 @@ using UnityEditor;
 using System.Collections.Generic;
 using UnityEditor.Animations;
 using AnimatorController = UnityEditor.Animations.AnimatorController;
+using System;
 
-namespace SOM{
+namespace SOM
+{
 	/// <summary>
 	/// The Mecanim Module gets every Animator Controller in the project and adds info about its name, properties, layers, states and sub-states
 	/// </summary>
-	public class SOMMecanimModule:SOMModule{
+	public class SOMMecanimModule : SOMModule
+	{
 		//===================================
 		//Consts
 		//===================================
@@ -33,190 +36,288 @@ namespace SOM{
 		const string ADD_LAYERS_TOOLTIP = "For every controller, should a submodule containing a list of that controller's layers be added?";
 		const string ADD_LAYER_NAME_TOOLTIP = "Add the name of the layer as a constant to that layer's module";
 		const string ADD_STATES_TOOLTIP = "Should a submodule containing a list of state names be added?";
-		const string ADD_STATE_MACHINES_TOOLTIP= "Should state machines inside every state machine be added recursively?";
-		const string ADD_STATE_MACHINES_NAME_TOOLTIP= "Should the name of the sub state machine be added as a constant?";
+		const string ADD_STATE_MACHINES_TOOLTIP = "Should state machines inside every state machine be added recursively?";
+		const string ADD_STATE_MACHINES_NAME_TOOLTIP = "Should the name of the sub state machine be added as a constant?";
 
 		//===================================
 		//Properties
 		//===================================
-		public override string moduleName{
-			get{return "Mecanim";}
+		public override string moduleName
+		{
+			get { return "Mecanim"; }
 		}
-		static bool addControllerName{
-			get{
+		static bool addControllerName
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_CONTROLLER_NAME_KEY))
 					addControllerName = true;
 				return SOMPreferences.bools[ADD_CONTROLLER_NAME_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_CONTROLLER_NAME_KEY] = value;
 			}
 		}
-		static bool addParameters{
-			get{
+		static bool addParameters
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_PARAMETERS_KEY))
 					addParameters = true;
 				return SOMPreferences.bools[ADD_PARAMETERS_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_PARAMETERS_KEY] = value;
 			}
 		}
-		static bool addLayers{
-			get{
+		static bool addLayers
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_LAYERS_KEY))
 					addLayers = true;
 				return SOMPreferences.bools[ADD_LAYERS_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_LAYERS_KEY] = value;
 			}
 		}
-		static bool addLayerName{
-			get{
+		static bool addLayerName
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_LAYER_NAME_KEY))
 					addLayerName = true;
 				return SOMPreferences.bools[ADD_LAYER_NAME_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_LAYER_NAME_KEY] = value;
 			}
 		}
-		static bool addStates{
-			get{
+		static bool addStates
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_STATES_KEY))
 					addStates = true;
 				return SOMPreferences.bools[ADD_STATES_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_STATES_KEY] = value;
 			}
 		}
-		static bool addStateMachines{
-			get{
+		static bool addStateMachines
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_STATE_MACHINES_KEY))
 					addStateMachines = true;
 				return SOMPreferences.bools[ADD_STATE_MACHINES_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_STATE_MACHINES_KEY] = value;
 			}
 		}
-		static bool addStateMachineName{
-			get{
+		static bool addStateMachineName
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_STATE_MACHINES_NAME_KEY))
 					addStateMachineName = true;
 				return SOMPreferences.bools[ADD_STATE_MACHINES_NAME_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_STATE_MACHINES_NAME_KEY] = value;
 			}
 		}
+		SOMUtils.FilterList _list;
+		SOMUtils.FilterList list
+		{
+			get
+			{
+				if (_list == null)
+					_list = new SOMUtils.FilterList(moduleName, "Controller names", SOMUtils.FilterList.FilterType.White);
+				return _list;
+			}
+		}
+
+		bool IsFiltered(string name)
+		{
+			// Check if the name is in the list
+			if (list.hasFilter)
+			{
+				bool isFiltered = false;
+				for (int i = 0; i < list.values.Length; i++)
+				{
+					if (list.values[i].EndsWith("/"))
+					{
+						if (name.StartsWith(list.values[i], StringComparison.InvariantCultureIgnoreCase))
+						{
+							isFiltered = true;
+							break;
+						}
+					}
+					else if (name.Equals(list.values[i], StringComparison.InvariantCultureIgnoreCase))
+					{
+						isFiltered = true;
+						break;
+					}
+				}
+				// And act accordingly
+				return !(isFiltered ^ list.isBlack);
+			}
+			return false;
+		}
+
 
 		//===================================
 		//Refresh
 		//===================================
-		public override void Refresh(){
+		public override void Refresh()
+		{
 			//Get a list of AnimatorControllers
 			string[] guids = AssetDatabase.FindAssets("t:AnimatorController");
 			List<AnimatorController> controllers = new List<AnimatorController>();
-			for (int i = 0; i < guids.Length; i++){
+			for (int i = 0; i < guids.Length; i++)
+			{
 				string path = AssetDatabase.GUIDToAssetPath(guids[i]);
 				//Exclude those in an editor folder
-				if (path.IndexOf("/editor/",System.StringComparison.InvariantCultureIgnoreCase) != -1)
+				if (path.IndexOf("/editor/", System.StringComparison.InvariantCultureIgnoreCase) != -1)
 					continue;
 				controllers.Add((AnimatorController)AssetDatabase.LoadAssetAtPath(path, typeof(AnimatorController)));
 			}
 
-			string subModule = moduleName+".controllers";
+			string subModule = moduleName + ".controllers";
+
 			SOMXmlHandler.AddModule(subModule);
 
 			//Foreach controller...
-			for (int i = 0; i < controllers.Count; i++){
-				string controllerModule = subModule+"."+controllers[i].name;
+			for (int i = 0; i < controllers.Count; i++)
+			{
+				string controllerModule = subModule + "." + controllers[i].name;
+
+				if (IsFiltered(controllers[i].name)) continue;
 				//Check if it's name isn't duplicated
-				try{
+				try
+				{
 					SOMXmlHandler.AddModule(controllerModule);
 				}
-				catch(ModuleAlreadyExistsException){
+				catch (ModuleAlreadyExistsException)
+				{
 					SOMUtils.LogWarning("The controller {0} at {1} was skipped due to a duplicated name. Try renaming it to something else", controllers[i].name, AssetDatabase.GetAssetPath(controllers[i]));
 					continue;
 				}
 
 				//Add a constant with it's name
 				if (addControllerName)
-					SOMXmlHandler.AddConstant(controllerModule,"name",controllers[i].name);
-				
+					SOMXmlHandler.AddConstant(controllerModule, "name", controllers[i].name);
+
 				//Add a list of parameters for every controller
-				if (addParameters){
-					string parametersModule = controllerModule+".parameters";
+				if (addParameters)
+				{
+					string parametersModule = controllerModule + ".parameters";
 					SOMXmlHandler.AddModule(parametersModule);
 					for (int j = 0; j < controllers[i].parameters.Length; j++)
 						SOMXmlHandler.AddConstant(parametersModule, SOMUtils.NicifyConstantName(controllers[i].parameters[j].name), controllers[i].parameters[j].name);
 				}
-					
+
 				//Add layers module
-				if (addLayers){
-					string layersModule = controllerModule+".layers";
+				if (addLayers)
+				{
+					string layersModule = controllerModule + ".layers";
 					SOMXmlHandler.AddModule(layersModule);
 					//And for each layer
-					for (int j = 0; j < controllers[i].layers.Length; j++){
-						string layerModule = layersModule+"."+controllers[i].layers[j].name;
+					for (int j = 0; j < controllers[i].layers.Length; j++)
+					{
+						string layerModule = layersModule + "." + controllers[i].layers[j].name;
 						//Add a layer with its name
 						SOMXmlHandler.AddModule(layerModule);
 						//And a constant too
 						if (addLayerName)
-							SOMXmlHandler.AddConstant(layerModule,"name",controllers[i].layers[j].name);
+							SOMXmlHandler.AddConstant(layerModule, "name", controllers[i].layers[j].name);
 
 						//And add all of this layer's state machine states
-						AddStateMachineRecursive(controllers[i].layers[j].stateMachine,layerModule);
+						AddStateMachineRecursive(controllers[i].layers[j].stateMachine, layerModule);
 					}
 				}
 
 				//Unload this controller from memory
-				Resources.UnloadAsset(controllers[i]);
+				// Resources.UnloadAsset(controllers[i]);
 			}
 		}
 
 		//Given a state machine, this module adds all of its states and sub state machines
-		void AddStateMachineRecursive(AnimatorStateMachine stateMachine, string ownerModule){
+		void AddStateMachineRecursive(AnimatorStateMachine stateMachine, string ownerModule)
+		{
 			//Add a constant for every state
-			if (addStates){
-				if (stateMachine.states.Length>0){
-					string statesModule = ownerModule+".states";
+			if (addStates)
+			{
+				if (stateMachine.states.Length > 0)
+				{
+					string statesModule = ownerModule + ".states";
 					SOMXmlHandler.AddModule(statesModule);
 					for (int i = 0; i < stateMachine.states.Length; i++)
-						SOMXmlHandler.AddConstant(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name),stateMachine.states[i].state.name);
+					{
+
+						SOMXmlHandler.AddConstant(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name), stateMachine.states[i].state.name);
+
+						// if (addStringTOHash)
+						// {
+						//     SOMXmlHandler.AddInt(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name) + "Hash", stateMachine.states[i].state.name);
+						// }
+					}
 				}
 			}
 
 			//If this state machine contains any sub state machine...
-			if (addStateMachines){
-				if (stateMachine.stateMachines.Length>0){
-					string subStateMachinesModule = ownerModule+".State Machines";
+			if (addStateMachines)
+			{
+				if (stateMachine.stateMachines.Length > 0)
+				{
+					string subStateMachinesModule = ownerModule + ".State Machines";
 					SOMXmlHandler.AddModule(subStateMachinesModule);
 					//add a module of their own with...
-					for (int i = 0; i < stateMachine.stateMachines.Length; i++){
+					for (int i = 0; i < stateMachine.stateMachines.Length; i++)
+					{
 						string stateMachineName = stateMachine.stateMachines[i].stateMachine.name;
-						string stateMachineModule = subStateMachinesModule+"."+stateMachineName;
+						string stateMachineModule = subStateMachinesModule + "." + stateMachineName;
 						SOMXmlHandler.AddModule(stateMachineModule);
 						//Its name...
 						if (addStateMachineName)
-							SOMXmlHandler.AddConstant(stateMachineModule,"name", stateMachineName);
+						{
+							SOMXmlHandler.AddConstant(stateMachineModule, "name", stateMachineName);
+
+							// if (addStringTOHash)
+							// {
+							//     SOMXmlHandler.AddInt(stateMachineModule, "nameHash", stateMachineName);
+							// }
+						}
 						//And all of its states
-						AddStateMachineRecursive(stateMachine.stateMachines[i].stateMachine,stateMachineModule);
+						AddStateMachineRecursive(stateMachine.stateMachines[i].stateMachine, stateMachineModule);
 					}
 				}
 			}
+
+
 		}
+
+		// bool addStringTOHash = true;
 
 		//===================================
 		//Repaint
 		//===================================
-		public override void DrawPreferences(){
-			addControllerName = EditorGUILayout.ToggleLeft(new GUIContent(ADD_CONTROLLER_NAME_LABEL, ADD_CONTROLLER_NAME_TOOLTIP),addControllerName);
-			addParameters = EditorGUILayout.ToggleLeft(new GUIContent(ADD_PARAMETERS_LABEL, ADD_PARAMETERS_TOOLTIP),addParameters);
-			addLayers = EditorGUILayout.ToggleLeft(new GUIContent(ADD_LAYERS_LABEL, ADD_LAYERS_TOOLTIP),addLayers);
+		public override void DrawPreferences()
+		{
+			addControllerName = EditorGUILayout.ToggleLeft(new GUIContent(ADD_CONTROLLER_NAME_LABEL, ADD_CONTROLLER_NAME_TOOLTIP), addControllerName);
+			addParameters = EditorGUILayout.ToggleLeft(new GUIContent(ADD_PARAMETERS_LABEL, ADD_PARAMETERS_TOOLTIP), addParameters);
+			addLayers = EditorGUILayout.ToggleLeft(new GUIContent(ADD_LAYERS_LABEL, ADD_LAYERS_TOOLTIP), addLayers);
 			GUI.enabled = addLayers;
 			//Only if addLayers is active
 			addLayerName = EditorGUILayout.ToggleLeft(new GUIContent(ADD_LAYER_NAME_LABEL, ADD_LAYER_NAME_TOOLTIP), addLayerName);
@@ -226,6 +327,7 @@ namespace SOM{
 			//Only active when state machines are being added
 			addStateMachineName = EditorGUILayout.ToggleLeft(new GUIContent(ADD_STATE_MACHINES_NAME_LABEL, ADD_STATE_MACHINES_NAME_TOOLTIP), addStateMachineName);
 			GUI.enabled = true;
+			list.DrawLayout();
 			base.DrawPreferences();
 		}
 	}
