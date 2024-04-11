@@ -1,10 +1,16 @@
+> ![Title.png](https://forum.unity.com/attachments/title-png.167796/)  
 >
->
-> A continuation of the work done by Cobo Antonio [with permission](https://forum.unity.com/threads/released-string-o-matic-say-goodbye-to-magic-strings.377123#post-9764475). Pull requests welcome!
+> A continuation of the [work done](https://assetstore.unity.com/packages/tools/utilities/string-o-matic-53019) by Cobo Antonio [with permission](https://forum.unity.com/threads/released-string-o-matic-say-goodbye-to-magic-strings.377123#post-9764475). Pull requests welcome!
 > 
+>#### Planned Features:
+> * Improved compatibility with newer version of Unity
+> * Text fields to specify the namespace, target directory, and class name.
+> * Filter lists for more categories
+><br></br>
+>----------------
+>
 > With String-O-Matic, magic strings are over.
 >
-> ![Title.png](https://forum.unity.com/attachments/title-png.167796/)  
 >
 > Unity's policy for implementing **magic strings** in almost all of its systems **is one the major sources of bugs** **and headaches**, especially for amateurs. **Using constant values** instead of relying on magic strings heavily **reduces** the amount of **runtime errors.**  
 >   
