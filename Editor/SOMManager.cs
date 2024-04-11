@@ -102,9 +102,27 @@ namespace SOM
 		static Vector2 scrollPos;
 		static int selected = -1;
 
-#pragma warning disable CS0618 // Type or member is obsolete
+#if UNITY_2018_3_OR_NEWER
+		private class SOMSettingsProvider : SettingsProvider
+		{
+			public SOMSettingsProvider(string path, SettingsScope scopes = SettingsScope.User)
+			: base(path, scopes)
+			{ }
+
+			public override void OnGUI(string searchContext)
+			{
+				OnPreferences();
+			}
+		}
+
+		[SettingsProvider]
+		static SettingsProvider OnPreferencesNew()
+		{
+			return new SOMSettingsProvider("Preferences/" + PREFERENCES_TAB);
+		}
+#else
 		[PreferenceItem(PREFERENCES_TAB)]
-#pragma warning restore CS0618 // Type or member is obsolete
+#endif
 		static void OnPreferences()
 		{
 			GUILayout.Space(40);
