@@ -64,3 +64,8 @@
 > ![SOMValueAttribute](https://github.com/haywirephoenix/StringOMatic/assets/26271795/a6cb5985-ecb4-4257-8409-9f237fea13bb)  
 > ​
 > 
+> **Version 1.1.1:**  
+>
+> * Added a filter list to the Mecanim module
+> * Fix Refresh from reverting animation controller changes
+> * Mechanim module now adds Animator.StringToHash ints 
