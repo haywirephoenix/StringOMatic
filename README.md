@@ -1,4 +1,4 @@
-> ![Title.png](https://forum.unity.com/attachments/title-png.167796/)  
+> ![Title](https://github.com/haywirephoenix/StringOMatic/assets/26271795/23f7876c-90c9-4751-bb13-929804c7064d)  
 >
 > A continuation of the [work done](https://assetstore.unity.com/packages/tools/utilities/string-o-matic-53019) by Cobo Antonio [with permission](https://forum.unity.com/threads/released-string-o-matic-say-goodbye-to-magic-strings.377123#post-9764475). Pull requests welcome!
 > 
@@ -18,9 +18,9 @@
 >   
 > 
 > Convert **error-prone** code  
-> ![SOM Not Used.png](https://forum.unity.com/attachments/som-not-used-png.167799/)  
+> ![SOM Not Used](https://github.com/haywirephoenix/StringOMatic/assets/26271795/5b56fd22-9cd0-446d-adc1-ff51c916910e)  
 > into **safe, robust** code  
-> ![SOM Used.png](https://forum.unity.com/attachments/som-used-png.167798/) ​
+> ![SOM Used](https://github.com/haywirephoenix/StringOMatic/assets/26271795/65b0cbbf-ae8f-4faa-b14b-462cba76a05e) ​
 > 
 >   
 > **Key Features:**  
@@ -51,7 +51,7 @@
 > *   Resources--> Lists every object under your resources folder/s and subfolders.
 > *   Shaders--> Lists the shader name and it's properties for every built-in and custom shader
 > 
-> ![Preferences.png](https://forum.unity.com/attachments/preferences-png.168028/)  
+> ![Preferences](https://github.com/haywirephoenix/StringOMatic/assets/26271795/f5b29da7-abf6-4994-b3bc-6a39a41bc728)  
 > ​
 > 
 > **Version 1.1:**  
@@ -61,6 +61,6 @@
 >     
 > *   Bug fixes.
 > 
-> ![SOMValueAttribute.png](https://forum.unity.com/attachments/somvalueattribute-png.174653/)  
+> ![SOMValueAttribute](https://github.com/haywirephoenix/StringOMatic/assets/26271795/a6cb5985-ecb4-4257-8409-9f237fea13bb)  
 > ​
 > 
