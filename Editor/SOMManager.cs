@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using System.Reflection;
 
 namespace SOM
 {
@@ -15,14 +14,47 @@ namespace SOM
 		//=========================================
 		//Consts
 		//=========================================
-		const string VERSION = "1.1.1";
+		const string VERSION = "2.0.0";
 		const string PREFERENCES_TAB = "String-O-Matic";
 		const string MENU_TAB = "Tools/SOM";
+
+		public const string VERSION_LABEL = "<b>String-O-Matic</b> version ";
+		public const string CLASSNAME_KEY = "Class Name";
+		public const string NAMESPACE_KEY = "Namespace";
+		public const string TARGET_DIRECTORY_KEY = "Target Directory";
+		public const string GENERATE_CS_KEY = "GenerateCS";
+		public const string WRITE_COMMENT_KEY = "WriteComment";
+
+		public const string DEFAULT_CLASS = "StringOMatic";
+		public const string DEFAULT_NAMESPACE = "StringOMatic";
+		public const string DEFAULT_TARGETDIR = "Assets/StringOMatic/";
+
+		const string SOMTitle = "SOMTitle";
+		const string GENERATE_CS_FILE = "Generate CS file";
+		const string WRITE_COMMENT = "Write comment at top";
+		const string CONTROL_ID = "SOMPreferences";
+		const string REFRESH_ALL = "Refresh All";
+		const string FORUM_THREAD = "Forum Thread";
+		const string FORUM_URL = "http://forum.unity3d.com/threads/string-o-matic-say-goodbye-to-magic-strings.377123/";
+		const string ASSET_STORE_PAGE = "Asset Store page";
+		const string ASSET_STORE_URL = "https://www.assetstore.unity3d.com/#!/content/53019";
+		const string GITHUB_REPO = "Github Repo";
+		const string GITHUB_REPO_URL = "https://github.com/haywirephoenix/StringOMatic/";
+
 
 		//=========================================
 		//Properties
 		//=========================================
 		//Get a list of all classes that inherit from SOMModule
+		static bool generateCS = true;
+		// static bool generateXML = false;
+		static bool classEnabled = false;
+		static bool namespaceEnabled = false;
+		static bool targetDirEnabled = false;
+		static bool commentEnabled = true;
+		static string classNameText = DEFAULT_CLASS;
+		static string namespaceText = EditorSettings.projectGenerationRootNamespace;
+		static string targetDirectory = DEFAULT_TARGETDIR;
 		static List<SOMModule> _modules;
 		static List<SOMModule> modules
 		{
@@ -46,7 +78,7 @@ namespace SOM
 			get
 			{
 				if (_header == null)
-					_header = Resources.Load<Texture>("SOMTitle");
+					_header = Resources.Load<Texture>(SOMTitle);
 				return _header;
 			}
 		}
@@ -82,18 +114,21 @@ namespace SOM
 		}
 		static void Refresh(int index, bool save = true)
 		{
-			if (!SOMXmlHandler.DocumentExists())
-				SOMXmlHandler.CreateDocument();
+
+			if (!SOMDataHandler.DatabaseExists())
+				SOMDataHandler.CreateDatabase();
 
 			SOMModule module = modules[index];
-			if (SOMXmlHandler.ModuleExists(module.moduleName))
-				SOMXmlHandler.RemoveModule(module.moduleName);
+			// if (SOMDataHandler.ModuleExists(module.moduleName))
+			// 	SOMDataHandler.RemoveModule(module.moduleName);
 
-			SOMXmlHandler.AddModule(module.moduleName);
+			// //SOMDataHandler.AddModule(module.moduleName);
 			module.Refresh();
 
 			if (save)
-				SOMXmlHandler.Save();
+				SOMDataHandler.Save();
+
+
 		}
 
 		//=========================================
@@ -101,6 +136,83 @@ namespace SOM
 		//=========================================
 		static Vector2 scrollPos;
 		static int selected = -1;
+		private static Rect _rect;
+		private static Rect GetLastRect()
+		{
+			GUILayout.Label(" ", GUILayout.MaxHeight(0));
+			if (Event.current.type == EventType.Repaint)
+			{
+				// hack to get real view width
+				_rect = GUILayoutUtility.GetLastRect();
+			}
+
+			return _rect;
+		}
+
+		static string DrawToggleTextField(this string textref, string key, string defaultText, ref bool fieldEnabled)
+		{
+			EditorGUILayout.BeginHorizontal();
+			EditorGUI.BeginChangeCheck();
+			fieldEnabled = GUILayout.Toggle(fieldEnabled, string.Empty, GUILayout.Width(13));
+
+			using (new EditorGUI.DisabledScope(!fieldEnabled))
+			{
+				textref = EditorGUILayout.TextField(key, defaultText);
+				SOMPreferences.SetStringInPrefs(key, defaultText);
+			}
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				if (!fieldEnabled)
+				{
+					textref = defaultText;
+					ResetToggleTextField(ref textref, key, defaultText);
+					EditorWindow.GetWindow<UnityEditor.EditorWindow>().Repaint();
+				}
+				else
+				{
+					SaveToggleTextField(ref textref, key, textref, defaultText);
+				}
+			}
+
+			EditorGUILayout.EndHorizontal();
+
+			return textref;
+		}
+
+
+
+		static void SaveToggleTextField(ref string textref, string key, string newValue, string defaultText)
+		{
+			string safeValue = SOMUtils.GetDefaultStringIfEmpty(newValue, defaultText);
+			if (defaultText == DEFAULT_TARGETDIR)
+				safeValue = SOMUtils.CleanPath(safeValue);
+			textref = newValue;
+			SOMPreferences.SetStringInPrefs(key, safeValue);
+		}
+
+		static void ResetToggleTextField(ref string textref, string key, string defaultText)
+		{
+			textref = defaultText;
+			SOMPreferences.SetStringInPrefs(key, defaultText);
+		}
+
+		static bool DrawToggleField(this bool boolref, string label, string key, bool defaultValue)
+		{
+			EditorGUI.BeginChangeCheck();
+			boolref = GUILayout.Toggle(SOMPreferences.GetBoolFromPrefs(key, defaultValue), label);
+			if (EditorGUI.EndChangeCheck())
+			{
+				SaveToggleField(boolref, key, boolref);
+			}
+			return boolref;
+		}
+		static void SaveToggleField(this bool boolref, string key, bool newValue)
+		{
+			boolref = newValue;
+			SOMPreferences.SetBoolInPrefs(key, newValue);
+		}
+
 
 #if UNITY_2018_3_OR_NEWER
 		private class SOMSettingsProvider : SettingsProvider
@@ -123,18 +235,37 @@ namespace SOM
 #else
 		[PreferenceItem(PREFERENCES_TAB)]
 #endif
+
+
 		static void OnPreferences()
 		{
-			GUILayout.Space(40);
-			//Draw Header
-			EditorGUI.DrawPreviewTexture(new Rect(130, 5, 360, 45), header);
 
-			int controlId = GUIUtility.GetControlID("SOMPreferences".GetHashCode(), FocusType.Keyboard);
+			EditorGUILayout.BeginHorizontal();
+			GUILayout.FlexibleSpace();
+			EditorGUILayout.EndHorizontal();
+			Rect scale = GUILayoutUtility.GetLastRect();
+
+			int controlId = GUIUtility.GetControlID(CONTROL_ID.GetHashCode(), FocusType.Keyboard);
 			GUILayout.BeginVertical();
 			GUIStyle style = new GUIStyle((GUIStyle)"OL Title");
+
+			//add the text fields
+			GUILayout.Space(20);
+			// generateCS.DrawToggleField(GENERATE_CS_FILE, GENERATE_CS_KEY, true);
+			commentEnabled.DrawToggleField(WRITE_COMMENT, WRITE_COMMENT_KEY, true);
+			// generateXML.DrawToggleField("Generate XML file", "GenerateXML", false);
+			GUILayout.Space(20);
+			classNameText.DrawToggleTextField(CLASSNAME_KEY, DEFAULT_CLASS, ref classEnabled);
+			namespaceText.DrawToggleTextField(NAMESPACE_KEY, EditorSettings.projectGenerationRootNamespace, ref namespaceEnabled);
+			targetDirectory.DrawToggleTextField(TARGET_DIRECTORY_KEY, DEFAULT_TARGETDIR, ref targetDirEnabled);
+
 			GUILayout.Space(20);
 
+
+
+			//begin the modules scrollview
 			scrollPos = GUILayout.BeginScrollView(scrollPos, (GUIStyle)"OL Box");
+
 
 			for (int i = 0; i < modules.Count; i++)
 			{
@@ -162,6 +293,7 @@ namespace SOM
 				EditorGUILayout.EndVertical();
 				EditorGUILayout.EndHorizontal();
 			}
+
 			//Move up & Down
 			if (GUIUtility.keyboardControl == controlId && Event.current.type == EventType.KeyDown)
 			{
@@ -178,34 +310,32 @@ namespace SOM
 				}
 			}
 			GUILayout.EndScrollView();
-			GUILayout.Space(5);
-			if (GUILayout.Button("Refresh"))
+
+			if (GUILayout.Button(REFRESH_ALL))
 				RefreshMenu();
 			if (GUI.changed)
 				SOMPreferences.Save();
 
+			GUILayout.Space(15);
 			//Draw Footer
-			GUILayout.Space(5);
-			//Draw line
-			Rect rect = EditorGUILayout.GetControlRect();
-			rect.height = 2;
-			EditorGUI.DrawRect(rect, Color.black);
+			EditorGUI.DrawPreviewTexture(new Rect(scale.width / 2 - 180, GetLastRect().y, 360, 45), header);
+			GUILayout.Space(70);
 			//Draw Version
 			GUILayout.Space(-15);
 			TextAnchor oldAllignment = EditorStyles.miniLabel.alignment;
 			EditorStyles.miniLabel.alignment = TextAnchor.MiddleRight;
 			EditorStyles.miniLabel.richText = true;
-			EditorGUILayout.LabelField("<b>String-O-Matic</b> version " + VERSION, EditorStyles.miniLabel);
+			EditorGUILayout.LabelField(VERSION_LABEL + VERSION, EditorStyles.miniLabel);
 			EditorStyles.miniLabel.richText = false;
 			EditorStyles.miniLabel.alignment = oldAllignment;
 			//Draw Buttons
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("Forum Thread", EditorStyles.miniButton))
-				Application.OpenURL("http://forum.unity3d.com/threads/string-o-matic-say-goodbye-to-magic-strings.377123/");
-			if (GUILayout.Button("Asset Store page", EditorStyles.miniButton))
-				Application.OpenURL("https://www.assetstore.unity3d.com/#!/content/53019");
-			if (GUILayout.Button("Github Repo", EditorStyles.miniButton))
-				Application.OpenURL("https://github.com/haywirephoenix/StringOMatic/");
+			if (GUILayout.Button(FORUM_THREAD, EditorStyles.miniButton))
+				Application.OpenURL(FORUM_URL);
+			if (GUILayout.Button(ASSET_STORE_PAGE, EditorStyles.miniButton))
+				Application.OpenURL(ASSET_STORE_URL);
+			if (GUILayout.Button(GITHUB_REPO, EditorStyles.miniButton))
+				Application.OpenURL(GITHUB_REPO_URL);
 			GUILayout.EndHorizontal();
 			GUILayout.EndVertical();
 		}
@@ -213,9 +343,12 @@ namespace SOM
 		// [MenuItem(MENU_TAB + "/Refresh %#r")]
 		public static void RefreshMenu()
 		{
+			SOMDataHandler.CreateDatabase();
 			RefreshAll();
-			SOMXmlHandler.Save();
-			SOMCSHarpHandler.Compile();
+			SOMDataHandler.Save();
+
+			if (SOMPreferences.GetBoolFromPrefs(GENERATE_CS_KEY, generateCS))
+				SOMCSHarpHandler.Compile();
 		}
 
 		[MenuItem(MENU_TAB + "/Preferences %#c")]
