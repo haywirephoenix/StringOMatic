@@ -39,12 +39,18 @@ namespace SOM
 		const string ADD_STATE_MACHINES_TOOLTIP = "Should state machines inside every state machine be added recursively?";
 		const string ADD_STATE_MACHINES_NAME_TOOLTIP = "Should the name of the sub state machine be added as a constant?";
 
+		public const string ClassName = "Mecanim";
+		public const string mechanim = "Mecanim";
+		public const string layers = "layers";
+		public const string states = "layers";
+		public const string StateMachines = "State Machines";
+
 		//===================================
 		//Properties
 		//===================================
 		public override string moduleName
 		{
-			get { return "Mecanim"; }
+			get { return ClassName; }
 		}
 		static bool addControllerName
 		{
@@ -196,7 +202,7 @@ namespace SOM
 
 			string subModule = moduleName + ".controllers";
 
-			SOMXmlHandler.AddModule(subModule);
+			//SOMDataHandler.AddModule(subModule);
 
 			//Foreach controller...
 			for (int i = 0; i < controllers.Count; i++)
@@ -207,7 +213,7 @@ namespace SOM
 				//Check if it's name isn't duplicated
 				try
 				{
-					SOMXmlHandler.AddModule(controllerModule);
+					//SOMDataHandler.AddModule(controllerModule);
 				}
 				catch (ModuleAlreadyExistsException)
 				{
@@ -217,31 +223,31 @@ namespace SOM
 
 				//Add a constant with it's name
 				if (addControllerName)
-					SOMXmlHandler.AddConstant(controllerModule, "name", controllers[i].name);
+					SOMDataHandler.AddConstant(controllerModule, "name", controllers[i].name);
 
 				//Add a list of parameters for every controller
 				if (addParameters)
 				{
 					string parametersModule = controllerModule + ".parameters";
-					SOMXmlHandler.AddModule(parametersModule);
+					//SOMDataHandler.AddModule(parametersModule);
 					for (int j = 0; j < controllers[i].parameters.Length; j++)
-						SOMXmlHandler.AddConstant(parametersModule, SOMUtils.NicifyConstantName(controllers[i].parameters[j].name), controllers[i].parameters[j].name);
+						SOMDataHandler.AddConstant(parametersModule, SOMUtils.NicifyConstantName(controllers[i].parameters[j].name), controllers[i].parameters[j].name);
 				}
 
 				//Add layers module
 				if (addLayers)
 				{
 					string layersModule = controllerModule + ".layers";
-					SOMXmlHandler.AddModule(layersModule);
+					//SOMDataHandler.AddModule(layersModule);
 					//And for each layer
 					for (int j = 0; j < controllers[i].layers.Length; j++)
 					{
 						string layerModule = layersModule + "." + controllers[i].layers[j].name;
 						//Add a layer with its name
-						SOMXmlHandler.AddModule(layerModule);
+						//SOMDataHandler.AddModule(layerModule);
 						//And a constant too
 						if (addLayerName)
-							SOMXmlHandler.AddConstant(layerModule, "name", controllers[i].layers[j].name);
+							SOMDataHandler.AddConstant(layerModule, "name", controllers[i].layers[j].name);
 
 						//And add all of this layer's state machine states
 						AddStateMachineRecursive(controllers[i].layers[j].stateMachine, layerModule);
@@ -262,15 +268,15 @@ namespace SOM
 				if (stateMachine.states.Length > 0)
 				{
 					string statesModule = ownerModule + ".states";
-					SOMXmlHandler.AddModule(statesModule);
+					//SOMDataHandler.AddModule(statesModule);
 					for (int i = 0; i < stateMachine.states.Length; i++)
 					{
 
-						SOMXmlHandler.AddConstant(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name), stateMachine.states[i].state.name);
+						SOMDataHandler.AddConstant(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name), stateMachine.states[i].state.name);
 
 						// if (addStringTOHash)
 						// {
-						//     SOMXmlHandler.AddInt(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name) + "Hash", stateMachine.states[i].state.name);
+						//     SOMDatabase.AddInt(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name) + "Hash", stateMachine.states[i].state.name);
 						// }
 					}
 				}
@@ -282,21 +288,21 @@ namespace SOM
 				if (stateMachine.stateMachines.Length > 0)
 				{
 					string subStateMachinesModule = ownerModule + ".State Machines";
-					SOMXmlHandler.AddModule(subStateMachinesModule);
+					//SOMDataHandler.AddModule(subStateMachinesModule);
 					//add a module of their own with...
 					for (int i = 0; i < stateMachine.stateMachines.Length; i++)
 					{
 						string stateMachineName = stateMachine.stateMachines[i].stateMachine.name;
 						string stateMachineModule = subStateMachinesModule + "." + stateMachineName;
-						SOMXmlHandler.AddModule(stateMachineModule);
+						//SOMDataHandler.AddModule(stateMachineModule);
 						//Its name...
 						if (addStateMachineName)
 						{
-							SOMXmlHandler.AddConstant(stateMachineModule, "name", stateMachineName);
+							SOMDataHandler.AddConstant(stateMachineModule, "name", stateMachineName);
 
 							// if (addStringTOHash)
 							// {
-							//     SOMXmlHandler.AddInt(stateMachineModule, "nameHash", stateMachineName);
+							//     SOMDatabase.AddInt(stateMachineModule, "nameHash", stateMachineName);
 							// }
 						}
 						//And all of its states

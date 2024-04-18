@@ -4,12 +4,14 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 
-namespace SOM{
+namespace SOM
+{
 	/// <summary>
 	/// The Shaders Module searches the project for every shader file (plus the built-in ones).
 	/// It then lists their names and properties. You can also specify white/black filters.
 	/// </summary>
-	public class SOMShadersModule : SOMModule {
+	public class SOMShadersModule : SOMModule
+	{
 		//========================================
 		//Consts
 		//========================================
@@ -245,65 +247,84 @@ namespace SOM{
 		//==============================
 		//Properties
 		//==============================
-		static bool addBuiltin{
-			get{
+		static bool addBuiltin
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_BUILTIN_KEY))
 					addBuiltin = true;
 				return SOMPreferences.bools[ADD_BUILTIN_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_BUILTIN_KEY] = value;
 			}
 		}
-		static bool addCustom{
-			get{
+		static bool addCustom
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_CUSTOM_KEY))
 					addCustom = true;
 				return SOMPreferences.bools[ADD_CUSTOM_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_CUSTOM_KEY] = value;
 			}
 		}
-		static bool addProperties{
-			get{
+		static bool addProperties
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_PROPERTIES_KEY))
 					addProperties = true;
 				return SOMPreferences.bools[ADD_PROPERTIES_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_PROPERTIES_KEY] = value;
 			}
 		}
-		static bool addPropertiesModule{
-			get{
+		static bool addPropertiesModule
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(ADD_PROPERTIES_MODULE_KEY))
 					addPropertiesModule = true;
 				return SOMPreferences.bools[ADD_PROPERTIES_MODULE_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[ADD_PROPERTIES_MODULE_KEY] = value;
 			}
 		}
-		static bool separateShaders{
-			get{
+		static bool separateShaders
+		{
+			get
+			{
 				if (!SOMPreferences.bools.Contains(SEPARATE_SHADERS_KEY))
 					separateShaders = false;
 				return SOMPreferences.bools[SEPARATE_SHADERS_KEY];
 			}
-			set{
+			set
+			{
 				SOMPreferences.bools[SEPARATE_SHADERS_KEY] = value;
 			}
 		}
-		SOMUtils.FilterList list{
-			get{
+		SOMUtils.FilterList list
+		{
+			get
+			{
 				if (_list == null)
 					_list = new SOMUtils.FilterList(moduleName, "Shader names", SOMUtils.FilterList.FilterType.Black);
 				return _list;
 			}
 		}
-		public override string moduleName {
-			get {
+		public override string moduleName
+		{
+			get
+			{
 				return "Shaders";
 			}
 		}
@@ -311,30 +332,36 @@ namespace SOM{
 		//========================================
 		//Refresh
 		//========================================
-		public override void Refresh(){
+		public override void Refresh()
+		{
 
 			//Compute built-in shaders
-			if (addBuiltin){
+			if (addBuiltin)
+			{
 				string builtInModule = moduleName;
-				if (separateShaders){
-					builtInModule+=".BuiltIn";
-					SOMXmlHandler.AddModule(builtInModule);
+				if (separateShaders)
+				{
+					builtInModule += ".BuiltIn";
+					//SOMDataHandler.AddModule(builtInModule);
 				}
 				for (int i = 0; i < builtIn.Length; i++)
 					AddShader(builtIn[i], builtInModule, true);
 			}
 
-			if (addCustom){
+			if (addCustom)
+			{
 				//For custom shaders, get all .shader files in the while project
 				string customModule = moduleName;
-				if (separateShaders){
-					customModule+=".Custom";
-					SOMXmlHandler.AddModule(customModule);
+				if (separateShaders)
+				{
+					customModule += ".Custom";
+					//SOMDataHandler.AddModule(customModule);
 				}
-				string[] shaders = Directory.GetFiles(Application.dataPath,"*.shader", SearchOption.AllDirectories);
+				string[] shaders = Directory.GetFiles(Application.dataPath, "*.shader", SearchOption.AllDirectories);
 
 				//For each one...
-				for (int i = 0; i < shaders.Length; i++){
+				for (int i = 0; i < shaders.Length; i++)
+				{
 					//Omit those in an editor folder
 					if (shaders[i].IndexOf("/editor/", StringComparison.InvariantCultureIgnoreCase) != -1)
 						continue;
@@ -348,7 +375,7 @@ namespace SOM{
 					//Filter invalid names and get shader name inbetween ""
 					if (!shaderName.Contains("\""))
 						continue;
-					shaderName = shaderName.Substring(shaderName.IndexOf('\"')+1);
+					shaderName = shaderName.Substring(shaderName.IndexOf('\"') + 1);
 					if (!shaderName.Contains("\""))
 						continue;
 					shaderName = shaderName.Substring(0, shaderName.IndexOf('\"'));
@@ -359,24 +386,30 @@ namespace SOM{
 			}
 		}
 		//Given a shader name and a parent module...
-		void AddShader(string name, string parent, bool isBuiltIn){
+		void AddShader(string name, string parent, bool isBuiltIn)
+		{
 			//Check if the shader in in the list
-			if (list.hasFilter){
+			if (list.hasFilter)
+			{
 				bool isFiltered = false;
-				for (int i = 0; i < list.values.Length; i++){
-					if (list.values[i].EndsWith("/")){
-						if (name.StartsWith(list.values[i],StringComparison.InvariantCultureIgnoreCase)){
+				for (int i = 0; i < list.values.Length; i++)
+				{
+					if (list.values[i].EndsWith("/"))
+					{
+						if (name.StartsWith(list.values[i], StringComparison.InvariantCultureIgnoreCase))
+						{
 							isFiltered = true;
 							break;
 						}
 					}
-					else if (name.Equals(list.values[i],StringComparison.InvariantCultureIgnoreCase)){
+					else if (name.Equals(list.values[i], StringComparison.InvariantCultureIgnoreCase))
+					{
 						isFiltered = true;
 						break;
 					}
 				}
 				//And act accordingly
-				if (!(isFiltered^list.isBlack))
+				if (!(isFiltered ^ list.isBlack))
 					return;
 			}
 
@@ -384,15 +417,19 @@ namespace SOM{
 			Shader shader = Shader.Find(name);
 			if (shader == null)
 				throw new ShaderDoesNotExistException(name, isBuiltIn);
-			if (SOMXmlHandler.ModuleExists(parent+"."+name)){
-				SOMUtils.LogWarning("Shaders--> The shader name \"{0}\" is duplicated. As a result, the shader at path \"{1}\" has been skipped",name, AssetDatabase.GetAssetPath(shader));
+			if (SOMDataHandler.ModuleExists(parent + "." + name))
+			{
+				SOMUtils.LogWarning("Shaders--> The shader name \"{0}\" is duplicated. As a result, the shader at path \"{1}\" has been skipped", name, AssetDatabase.GetAssetPath(shader));
 				Resources.UnloadAsset(shader);
 				return;
 			}
-			if (!isBuiltIn){
-				for (int i = 0; i < builtIn.Length; i++){
-					if (name.Equals(builtIn[i])){
-						SOMUtils.LogWarning("Shaders--> The shader at path \"{0}\" has the same name as the built-in shader \"{1}\". As a result, it has been skipped",AssetDatabase.GetAssetPath(shader), name);
+			if (!isBuiltIn)
+			{
+				for (int i = 0; i < builtIn.Length; i++)
+				{
+					if (name.Equals(builtIn[i]))
+					{
+						SOMUtils.LogWarning("Shaders--> The shader at path \"{0}\" has the same name as the built-in shader \"{1}\". As a result, it has been skipped", AssetDatabase.GetAssetPath(shader), name);
 						Resources.UnloadAsset(shader);
 						return;
 					}
@@ -403,26 +440,30 @@ namespace SOM{
 			string[] subModules = name.Split('/');
 			string subModuleName = parent;
 			//And check if a module with that part name already exists
-			for (int j = 0; j < subModules.Length; j++){
-				subModuleName+="."+subModules[j];
+			for (int j = 0; j < subModules.Length; j++)
+			{
+				subModuleName += "." + subModules[j];
 				//If it does not, add it
-				if (!SOMXmlHandler.ModuleExists(subModuleName))
-					SOMXmlHandler.AddModule(subModuleName);
+				// if (!SOMDataHandler.ModuleExists(subModuleName))
+				//SOMDataHandler.AddModule(subModuleName);
 			}
 			//And finally add the shader final name to the module
-			SOMXmlHandler.AddConstant(subModuleName,"name",name);
+			SOMDataHandler.AddConstant(subModuleName, "name", name);
 
 			//For that shader, add all of its properties as constants
-			if (addProperties){
+			if (addProperties)
+			{
 				string propertiesModule = subModuleName;
-				if (addPropertiesModule){
-					propertiesModule+=".Properties";
-					SOMXmlHandler.AddModule(propertiesModule);
+				if (addPropertiesModule)
+				{
+					propertiesModule += ".Properties";
+					//SOMDataHandler.AddModule(propertiesModule);
 				}
 				int count = ShaderUtil.GetPropertyCount(shader);
-				for (int j = 0; j <count; j++){
-					string propertyName = ShaderUtil.GetPropertyName(shader,j);
-					SOMXmlHandler.AddConstant(propertiesModule,SOMUtils.NicifyConstantName(propertyName),propertyName);
+				for (int j = 0; j < count; j++)
+				{
+					string propertyName = ShaderUtil.GetPropertyName(shader, j);
+					SOMDataHandler.AddConstant(propertiesModule, SOMUtils.NicifyConstantName(propertyName), propertyName);
 				}
 			}
 			Resources.UnloadAsset(shader);
@@ -431,7 +472,8 @@ namespace SOM{
 		//========================================
 		//Preferences
 		//========================================
-		public override void DrawPreferences(){
+		public override void DrawPreferences()
+		{
 			separateShaders = EditorGUILayout.ToggleLeft(new GUIContent(SEPARATE_SHADERS_LABEL, SEPARATE_SHADERS_TOOLTIP), separateShaders);
 			addBuiltin = EditorGUILayout.ToggleLeft(new GUIContent(ADD_BUILTIN_LABEL, ADD_BUILTIN_TOOLTIP), addBuiltin);
 			addCustom = EditorGUILayout.ToggleLeft(new GUIContent(ADD_CUSTOM_LABEL, ADD_CUSTOM_TOOLTIP), addCustom);
@@ -445,7 +487,8 @@ namespace SOM{
 			base.DrawPreferences();
 		}
 	}
-	public class ShaderDoesNotExistException:SOMException{
-		public ShaderDoesNotExistException(string shaderName, bool builtIn):base(string.Format("The {0}shader \"{1}\" does not exist as for version {2}", builtIn?"built-in ":"",shaderName, Application.unityVersion)){}
+	public class ShaderDoesNotExistException : SOMException
+	{
+		public ShaderDoesNotExistException(string shaderName, bool builtIn) : base(string.Format("The {0}shader \"{1}\" does not exist as for version {2}", builtIn ? "built-in " : "", shaderName, Application.unityVersion)) { }
 	}
 }
