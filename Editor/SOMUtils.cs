@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditorInternal;
 using System.Collections.Generic;
+using System.IO;
 
 namespace SOM
 {
@@ -12,6 +13,11 @@ namespace SOM
 	/// </summary>
 	public static class SOMUtils
 	{
+
+		public const Char dotChar = '.';
+		public const Char colonChar = ':';
+		public const Char underscoreChar = '.';
+		public const String dotStr = ".";
 
 		//=====================================
 		//Nicify Methods
@@ -38,6 +44,13 @@ namespace SOM
 			"using", "virtual", "void", "volatile", "while"
 		};
 
+		private const string MODULE_SUFFIX = "Module";
+
+		public static string RemoveWhitespace(this string str)
+		{
+			return string.Join("", str.Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+		}
+
 		/// <summary>
 		/// Nicifies the name of the module to make it PascalCase. 
 		/// Also, any numbers at the start of the name are moved back to the end.
@@ -45,6 +58,7 @@ namespace SOM
 		public static string NicifyModuleName(string name)
 		{
 			string newName = name.Trim();
+			newName = RemoveWhitespace(newName);
 			if (string.IsNullOrEmpty(newName))
 				return newName;
 			//Capitalize words and remove spaces
@@ -97,7 +111,7 @@ namespace SOM
 
 			//If isKeyword, revert back to uppercase
 			if (IsKeyword(finalName))
-				finalName = name;
+				finalName += "_";
 			return finalName;
 		}
 		/// <summary>
@@ -204,6 +218,86 @@ namespace SOM
 			};
 			EditorApplication.delayCall+=c;
 #endif
+		}
+
+		public static string GetValidTargetDir(string targetdir)
+		{
+			// string targetdir = SOMPreferences.GetTargetDir();
+
+			if (!String.IsNullOrEmpty(targetdir))
+			{
+				if (Directory.Exists(targetdir))
+				{
+					return CleanPath(targetdir);
+				}
+				else
+				{
+					try
+					{
+						Directory.CreateDirectory(targetdir);
+						return CleanPath(targetdir);
+					}
+					catch (Exception ex)
+					{
+						throw new FileNotFoundException($"Failed to create target directory {targetdir}: {ex.Message}");
+					}
+				}
+			}
+			else
+			{
+				if (Directory.Exists(SOMManager.DEFAULT_TARGETDIR))
+				{
+					return SOMManager.DEFAULT_TARGETDIR;
+				}
+				else
+				{
+					throw new FileNotFoundException($"Target directory is not specified and default target directory {SOMManager.DEFAULT_TARGETDIR} is missing");
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Returns the path with a forwardslash
+		/// </summary>
+		public static string CleanPath(string path)
+		{
+			// Replace all forward slashes with backslashes
+			path = path.Replace('/', '\\');
+
+			if (!path.StartsWith("Assets\\"))
+			{
+				// If it doesn't, add "Assets\" to the beginning of the path
+				path = "Assets\\" + path;
+			}
+			// Ensure the path ends with a backslash
+			if (!path.EndsWith("\\"))
+			{
+				return path + "\\";
+			}
+
+
+			return path;
+		}
+
+		/// <summary>
+		/// Returns a default string if the str is empty
+		/// </summary>
+		public static string GetDefaultStringIfEmpty(string _str, string defaultstr = "")
+		{
+			if (string.IsNullOrEmpty(_str)) return defaultstr;
+			else return _str;
+		}
+
+		/// <summary>
+		/// Retrieve the root namespace from editor preferences
+		/// </summary>
+		public static string GetRootNamespace()
+		{
+
+			string rootNamespace = EditorSettings.projectGenerationRootNamespace;
+
+			return rootNamespace;
 		}
 		/// <summary>
 		/// Layouted Key Event version of the equivalent InfField, FLoatField, TextField Methods etc.
@@ -323,41 +417,4 @@ namespace SOM
 		}
 	}
 
-	//=====================================
-	//Exceptions
-	//=====================================
-	public class SOMException : Exception
-	{
-		public SOMException() : base() { }
-		public SOMException(string message) : base(message) { }
-		public SOMException(string message, Exception innerException) : base(message, innerException) { }
-	}
-	public class XmlDocumentDoesNotExistException : SOMException
-	{
-		public XmlDocumentDoesNotExistException() : base("The document does not exist") { }
-	}
-	public class ModuleDoesNotExistException : SOMException
-	{
-		public ModuleDoesNotExistException(string path) : base(string.Format("The module at path \'{0}\' does not exist", path)) { }
-	}
-	public class ModuleAlreadyExistsException : SOMException
-	{
-		public ModuleAlreadyExistsException(string path) : base(string.Format("The module at path \'{0}\' already exists", path)) { }
-	}
-	public class ConstantDoesNotExistException : SOMException
-	{
-		public ConstantDoesNotExistException(string path, string constant) : base(string.Format("The module at path \'{0}\' does not have the constant \'{1}\'", path, constant)) { }
-	}
-	public class ConstantAlreadyExistsException : SOMException
-	{
-		public ConstantAlreadyExistsException(string path, string constant) : base(string.Format("The module at path \'{0}\' already has the constant \'{1}\'", path, constant)) { }
-	}
-	public class InvalidModuleNameException : SOMException
-	{
-		public InvalidModuleNameException(string name) : base(string.Format("\'{0}\' is not a valid module name", name)) { }
-	}
-	public class InvalidConstantNameException : SOMException
-	{
-		public InvalidConstantNameException(string constant) : base(string.Format("\'{0}\' is not a valid constant name", constant)) { }
-	}
 }
