@@ -2,44 +2,22 @@
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+using System;
 
-namespace SOM{
+namespace SOM
+{
 	/// <summary>
 	/// This class mimics the behaviour of classes like PlayerPrefs or EditorPrefs, excepts that this is project-dependant.
 	/// Values are added or retrieved through the indexer property.
 	/// </summary>
-	public class SOMPreferences : ScriptableObject {
+	public class SOMPreferences : SOMScriptableSingleton<SOMPreferences>
+	{
 
 		//==================================
 		//Consts
 		//==================================
-		const string NAME = "SOMPreferences";
 
-		//==================================
-		//Singleton
-		//==================================
-		static SOMPreferences singleton;
-		static SOMPreferences Singleton{
-			get{
-				//Get an existing file or create a new one
-				if (singleton == null){ 
-					string[] guids = AssetDatabase.FindAssets(NAME+ " t:"+typeof(SOMPreferences).Name);
-					if (guids.Length == 0){
-						singleton = ScriptableObject.CreateInstance<SOMPreferences>();
-						guids = AssetDatabase.FindAssets(typeof(SOMPreferences).Name);
-						if (guids.Length == 0)
-							throw new FileNotFoundException("File could not be found");
-						string targetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
-						targetPath = targetPath.Substring(0, targetPath.LastIndexOf("/")); 
-						AssetDatabase.CreateAsset(singleton, targetPath+"/"+NAME+".asset");
-						AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(singleton));
-					}
-					else
-						singleton = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guids[0]), typeof(SOMPreferences)) as SOMPreferences;
-				}
-				return singleton;
-			}
-		}
+		protected override string Name { get; set; } = "SOMPreferences";
 
 		//==================================
 		//Constants
@@ -59,42 +37,50 @@ namespace SOM{
 		/// <summary>
 		/// Gets or sets a bool value
 		/// </summary>
-		public static KeyCollection<bool> bools{ 
-			get{ 
+		public static KeyCollection<bool> bools
+		{
+			get
+			{
 				if (Singleton._bools == null)
-					Singleton._bools = new BoolKeyCollection(); 
+					Singleton._bools = new BoolKeyCollection();
 				return Singleton._bools;
 			}
 		}
 		/// <summary>
 		/// Gets or sets a string value
 		/// </summary>
-		public static KeyCollection<string> strings{ 
-			get{ 
+		public static KeyCollection<string> strings
+		{
+			get
+			{
 				if (Singleton._strings == null)
-					Singleton._strings = new StringKeyCollection(); 
+					Singleton._strings = new StringKeyCollection();
 				return Singleton._strings;
 			}
 		}
 		/// <summary>
 		/// Gets or sets an int value
 		/// </summary>
-		public static KeyCollection<int> ints{
-			get{
+		public static KeyCollection<int> ints
+		{
+			get
+			{
 				if (Singleton._ints == null)
 					Singleton._ints = new IntKeyCollection();
 				return Singleton._ints;
-			}	
+			}
 		}
 		/// <summary>
 		/// Gets or sets a float value
 		/// </summary>
-		public static KeyCollection<float> floats{
-			get{
+		public static KeyCollection<float> floats
+		{
+			get
+			{
 				if (Singleton._floats == null)
 					Singleton._floats = new FloatKeyCollection();
 				return Singleton._floats;
-			}	
+			}
 		}
 
 		//==================================
@@ -103,8 +89,65 @@ namespace SOM{
 		/// <summary>
 		/// Tells Unity to serialize and save this object
 		/// </summary>
-		public static void Save(){
+		public static void Save()
+		{
 			EditorUtility.SetDirty(Singleton);
+		}
+
+		/// <summary>
+		/// Returns a string from prefs if it exists or returns an optional default
+		/// </summary>
+		public static string GetStringFromPrefs(string key, string defaultstr = "")
+		{
+			if (string.IsNullOrEmpty(key)) return defaultstr;
+
+			if (strings.Contains(key))
+			{
+				return strings[key];
+			}
+			else
+			{
+				return defaultstr;
+			}
+		}
+		public static void SetStringInPrefs(string key, string _string)
+		{
+			strings[key] = _string;
+		}
+		public static bool GetBoolFromPrefs(string key, bool defaultbool)
+		{
+
+			if (bools.Contains(key))
+			{
+				return bools[key];
+			}
+			else
+			{
+				return defaultbool;
+			}
+		}
+		public static void SetBoolInPrefs(string key, bool value)
+		{
+			bools[key] = value;
+		}
+
+		public static string GetClassName()
+		{
+
+			return GetStringFromPrefs(SOMManager.CLASSNAME_KEY, SOMManager.DEFAULT_CLASS);
+
+		}
+		public static string GetNamespace()
+		{
+
+			return GetStringFromPrefs(SOMManager.NAMESPACE_KEY, SOMManager.DEFAULT_NAMESPACE);
+
+		}
+		public static string GetTargetDir()
+		{
+
+			return GetStringFromPrefs(SOMManager.TARGET_DIRECTORY_KEY, SOMManager.DEFAULT_TARGETDIR);
+
 		}
 
 		//==================================
@@ -114,23 +157,28 @@ namespace SOM{
 		/// <summary>
 		/// Mimics the behaviour of a simplistic Dictionary
 		/// </summary>
-		public abstract class KeyCollection<T>{
+		public abstract class KeyCollection<T>
+		{
 			[SerializeField]
 			List<string> _names;
 			[SerializeField]
 			List<T> _values;
 
-			protected abstract T defaultValue{get;}
-			
-			List<string> names{
-				get{
+			protected abstract T defaultValue { get; }
+
+			List<string> names
+			{
+				get
+				{
 					if (_names == null)
 						_names = new List<string>();
 					return _names;
 				}
 			}
-			List<T> values{
-				get{
+			List<T> values
+			{
+				get
+				{
 					if (_values == null)
 						_values = new List<T>();
 					return _values;
@@ -141,7 +189,8 @@ namespace SOM{
 			/// Whether this collection contains the specified key
 			/// </summary>
 			/// <param name="name">Name.</param>
-			public bool Contains(string name){
+			public bool Contains(string name)
+			{
 				return names.Contains(name);
 			}
 
@@ -149,16 +198,21 @@ namespace SOM{
 			/// Gets or sets the key with the specified name. If it does not exist, it is created.
 			/// </summary>
 			/// <param name="name">Name.</param>
-			public T this[string name]{
-				get{
-					if (!Contains(name)){
+			public T this[string name]
+			{
+				get
+				{
+					if (!Contains(name))
+					{
 						names.Add(name);
 						values.Add(defaultValue);
 					}
 					return values[names.IndexOf(name)];
 				}
-				set{
-					if (!Contains(name)){
+				set
+				{
+					if (!Contains(name))
+					{
 						names.Add(name);
 						values.Add(defaultValue);
 					}
@@ -168,8 +222,10 @@ namespace SOM{
 			/// <summary>
 			/// Delete the specified key
 			/// </summary>
-			public void Delete(string name){
-				if (Contains(name)){
+			public void Delete(string name)
+			{
+				if (Contains(name))
+				{
 					int index = names.IndexOf(name);
 					names.RemoveAt(index);
 					values.RemoveAt(index);
@@ -177,20 +233,24 @@ namespace SOM{
 			}
 		}
 		[System.Serializable]
-		class BoolKeyCollection:KeyCollection<bool>{
-			protected override bool defaultValue {get {return true;}}
+		class BoolKeyCollection : KeyCollection<bool>
+		{
+			protected override bool defaultValue { get { return true; } }
 		}
 		[System.Serializable]
-		class IntKeyCollection:KeyCollection<int>{
-			protected override int defaultValue {get {return 0;}}
+		class IntKeyCollection : KeyCollection<int>
+		{
+			protected override int defaultValue { get { return 0; } }
 		}
 		[System.Serializable]
-		class StringKeyCollection:KeyCollection<string>{
-			protected override string defaultValue {get {return string.Empty;}}
+		class StringKeyCollection : KeyCollection<string>
+		{
+			protected override string defaultValue { get { return string.Empty; } }
 		}
 		[System.Serializable]
-		class FloatKeyCollection:KeyCollection<float>{
-			protected override float defaultValue {get {return 0;}}
+		class FloatKeyCollection : KeyCollection<float>
+		{
+			protected override float defaultValue { get { return 0; } }
 		}
 	}
 
@@ -198,8 +258,10 @@ namespace SOM{
 	//Editor
 	//==================================
 	[CustomEditor(typeof(SOMPreferences))]
-	public class SOMPReferencesEditor:Editor{
-		public override void OnInspectorGUI(){
+	public class SOMPReferencesEditor : Editor
+	{
+		public override void OnInspectorGUI()
+		{
 			Color oldColor = GUI.backgroundColor;
 			GUI.backgroundColor = Color.green;
 			if (GUILayout.Button("Open Preferences"))
