@@ -52,7 +52,7 @@ namespace SOM
 		static bool classEnabled;
 		static bool namespaceEnabled;
 		static bool targetDirEnabled;
-		static bool commentEnabled;
+		static bool writeCommentEnabled;
 		static string classNameText;
 		static string namespaceText;
 		static string targetDirectory;
@@ -150,7 +150,7 @@ namespace SOM
 			return _rect;
 		}
 
-		static bool DrawToggleTextField(ref string labelText, string key, string defaultText, ref bool fieldEnabled, bool defaultEnabled = false)
+		static bool DrawToggleTextField(ref string textref, string key, string defaultText, ref bool fieldEnabled, bool defaultEnabled = false)
 		{
 			EditorGUILayout.BeginHorizontal();
 
@@ -160,7 +160,7 @@ namespace SOM
 
 			using (new EditorGUI.DisabledScope(!isEnabled))
 			{
-				labelText = EditorGUILayout.TextField(key, SOMPreferences.GetStringFromPrefs(key, defaultText));
+				textref = EditorGUILayout.TextField(key, SOMPreferences.GetStringFromPrefs(key, defaultText));
 			}
 
 			if (EditorGUI.EndChangeCheck())
@@ -171,15 +171,11 @@ namespace SOM
 
 				if (!fieldEnabled)
 				{
-					labelText = defaultText;
-					SOMPreferences.SetStringInPrefs(key, defaultText);
+					ResetToggleTextField(ref textref, key, defaultText);
 				}
 				else
 				{
-					string safeValue = SOMUtils.GetDefaultStringIfEmpty(labelText, defaultText);
-					if (defaultText == DEFAULT_TARGETDIR)
-						safeValue = SOMUtils.CleanPath(safeValue);
-					SOMPreferences.SetStringInPrefs(key, safeValue);
+					SaveToggleTextField(key, textref, defaultText);
 				}
 
 				EditorWindow.GetWindow<UnityEditor.EditorWindow>().Repaint();
@@ -192,12 +188,11 @@ namespace SOM
 
 
 
-		static void SaveToggleTextField(ref string textref, string key, string newValue, string defaultText)
+		static void SaveToggleTextField(string key, string newValue, string defaultText)
 		{
 			string safeValue = SOMUtils.GetDefaultStringIfEmpty(newValue, defaultText);
 			if (defaultText == DEFAULT_TARGETDIR)
 				safeValue = SOMUtils.CleanPath(safeValue);
-			textref = newValue;
 			SOMPreferences.SetStringInPrefs(key, safeValue);
 		}
 
@@ -207,7 +202,7 @@ namespace SOM
 			SOMPreferences.SetStringInPrefs(key, defaultText);
 		}
 
-		static bool DrawToggleField(this bool boolref, string label, string key, bool defaultValue)
+		static bool DrawToggleField(ref bool boolref, string label, string key, bool defaultValue)
 		{
 			EditorGUI.BeginChangeCheck();
 			boolref = GUILayout.Toggle(SOMPreferences.GetBoolFromPrefs(key, defaultValue), label);
@@ -262,7 +257,7 @@ namespace SOM
 			//add the text fields
 			GUILayout.Space(20);
 			// generateCS.DrawToggleField(GENERATE_CS_FILE, GENERATE_CS_KEY, true);
-			commentEnabled.DrawToggleField(WRITE_COMMENT, WRITE_COMMENT_KEY, true);
+			DrawToggleField(ref writeCommentEnabled, WRITE_COMMENT, WRITE_COMMENT_KEY, true);
 			// generateXML.DrawToggleField("Generate XML file", "GenerateXML", false);
 			GUILayout.Space(20);
 
