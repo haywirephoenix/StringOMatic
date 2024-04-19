@@ -59,7 +59,8 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 - [ ] Add "Update Available" banner with Update button in preferences
 - [ ] Fix filter lists, make universal filter template
 - [ ] Add filter lists for more categories
-- [ ] Add directory selection shortcut 
+- [ ] Add directory selection shortcut
+- [ ] Add whitelist object field
 - [x] Animator hash generation (Complete)
 - [x] Improved compatibility with newer versions of Unity (Complete)
 - [x] Text fields to specify the namespace, target directory, and class name. (Complete)
