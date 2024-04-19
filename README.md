@@ -57,12 +57,14 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 
 - [ ] Support package manager git url
 - [ ] Add "Update Available" banner with Update button in preferences
+- [ ] Fix filter lists, make universal filter template
 - [ ] Add filter lists for more categories
-- [x] Animator hash generation
-- [x] Improved compatibility with newer versions of Unity
-- [x] Text fields to specify the namespace, target directory, and class name.
-- [x] Remove XML intermediary generation
-- [x] Improve performance
+- [ ] Add directory selection shortcut 
+- [x] Animator hash generation (Complete)
+- [x] Improved compatibility with newer versions of Unity (Complete)
+- [x] Text fields to specify the namespace, target directory, and class name. (Complete)
+- [x] Remove XML intermediary generation (Complete)
+- [x] Improve performance (Complete)
 
 
 </details>
