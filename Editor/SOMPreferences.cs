@@ -14,12 +14,6 @@ namespace SOM
 	{
 
 		//==================================
-		//Consts
-		//==================================
-
-		protected override string Name { get; set; } = "SOMPreferences";
-
-		//==================================
 		//Constants
 		//==================================
 		[SerializeField]

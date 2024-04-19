@@ -8,14 +8,7 @@ namespace SOM
     public class SOMScriptableSingleton<T> : ScriptableObject where T : ScriptableObject
     {
 
-        protected virtual string Name { get; set; } = "SOMScriptable";
-
-        [NonSerialized] private static string _name;
-        public SOMScriptableSingleton()
-        {
-            _name = Name;
-        }
-
+        public static string Name { get { return typeof(T).Name; } }
         private static T singleton;
         public static T Singleton
         {
@@ -24,7 +17,7 @@ namespace SOM
                 //Get an existing file or create a new one
                 if (singleton == null)
                 {
-                    string[] guids = AssetDatabase.FindAssets(_name + " t:" + typeof(T).Name);
+                    string[] guids = AssetDatabase.FindAssets(Name + " t:" + typeof(T).Name);
                     if (guids.Length == 0)
                     {
                         singleton = ScriptableObject.CreateInstance<T>();
@@ -33,7 +26,7 @@ namespace SOM
                             throw new FileNotFoundException("File could not be found");
                         string targetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
                         targetPath = targetPath.Substring(0, targetPath.LastIndexOf("/"));
-                        AssetDatabase.CreateAsset(singleton, targetPath + "/" + _name + ".asset");
+                        AssetDatabase.CreateAsset(singleton, targetPath + "/" + Name + ".asset");
                         AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(singleton));
                     }
                     else
