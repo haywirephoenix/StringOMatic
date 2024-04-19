@@ -19,9 +19,9 @@ namespace SOM
 		const string MENU_TAB = "Tools/StringOMatic";
 		public const string VERSION_LABEL = "<b>String-O-Matic</b> version ";
 
-		public const string CLASSNAME_KEY = "ClassName";
+		public const string CLASSNAME_KEY = "File Name";
 		public const string NAMESPACE_KEY = "Namespace";
-		public const string TARGET_DIRECTORY_KEY = "TargetDirectory";
+		public const string TARGET_DIRECTORY_KEY = "Target Directory";
 		public const string GENERATE_CS_KEY = "GenerateCS";
 		public const string WRITE_COMMENT_KEY = "WriteComment";
 
