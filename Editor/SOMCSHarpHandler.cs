@@ -30,6 +30,7 @@ namespace SOM
 		const string _static = "static";
 		const string _const = "const";
 		const string _class = "class";
+		const string _struct = "struct";
 		const string _string = "string";
 		const string _int = "int";
 		const string _openBrace = "{";
@@ -237,6 +238,10 @@ namespace SOM
 		{
 			return $"{_public} {_static} {_class} {className}";
 		}
+		private static string GetStructString(string structName)
+		{
+			return $"{_public} {_struct} {structName}";
+		}
 		private static string GetConstString(string constName, string constValue)
 		{
 			return $"{_public} {_const} {_string} {constName} = \"{constValue}\";";
@@ -245,6 +250,14 @@ namespace SOM
 		{
 			sb.WriteIndentations(indent);
 			sb.WriteLine(GetClassString(className));
+			sb.WriteIndentations(indent);
+			sb.WriteBrace(BraceState.Open, indent);
+
+		}
+		private static void WriteStruct(this StringBuilder sb, string className, int indent = 0)
+		{
+			sb.WriteIndentations(indent);
+			sb.WriteLine(GetStructString(className));
 			sb.WriteIndentations(indent);
 			sb.WriteBrace(BraceState.Open, indent);
 
@@ -442,12 +455,15 @@ namespace SOM
 
 			string niceConstKey = SOMUtils.NicifyConstantName(constantName);
 
-			string intLine = $"{_public} {_static} {_int} {niceConstKey}Hash = {Animator.StringToHash(animhashname)};";
+			string nameIntLine = $"{_public} {_static} {_int} {niceConstKey}Hash = {Animator.StringToHash(constValue)};";
+			string fullPathIntLine = $"{_public} {_static} {_int} {niceConstKey}FullPathHash = {Animator.StringToHash(animhashname)};";
 
 			string fullpathcomment = _indentStr + _doublefslash + animhashname;
 
 			sb.WriteIndentations(indentLevel);
-			sb.WriteLine(intLine + fullpathcomment);
+			sb.WriteLine(nameIntLine);
+			sb.WriteIndentations(indentLevel);
+			sb.WriteLine(fullPathIntLine + fullpathcomment);
 		}
 		static void WriteLine(this StringBuilder sb, string content = "")
 		{
