@@ -15,6 +15,7 @@ namespace SOM
 		//===================================
 		//Consts
 		//===================================
+		public const string ADD_ANIM_HASH_KEY = "Mecanim Module Add Animator Hashes";
 		const string ADD_CONTROLLER_NAME_KEY = "Mecanim Module Add Controller Name Key";
 		const string ADD_PARAMETERS_KEY = "Mecanim Module Add Parameters";
 		const string ADD_LAYERS_KEY = "Mecanim Module Add Layers";
@@ -23,6 +24,7 @@ namespace SOM
 		const string ADD_STATE_MACHINES_KEY = "Mecanim Module Add State Machines Key";
 		const string ADD_STATE_MACHINES_NAME_KEY = "Mecanim Module Add State Machines Name Key";
 
+		const string ADD_ANIM_HASH_LABEL = "Add StringToHash Ints";
 		const string ADD_CONTROLLER_NAME_LABEL = "Add Controller's Name";
 		const string ADD_PARAMETERS_LABEL = "Add Parameters";
 		const string ADD_LAYERS_LABEL = "Add Layers";
@@ -31,6 +33,7 @@ namespace SOM
 		const string ADD_STATE_MACHINES_LABEL = "Add State Machine";
 		const string ADD_STATE_MACHINES_NAME_LABEL = "Add State Machine Name";
 
+		const string ADD_ANIM_HASH_TOOLTIP = "Add the Animator string to hash ints";
 		const string ADD_CONTROLLER_NAME_TOOLTIP = "Add the name of the controller as a constant to that controller's module";
 		const string ADD_PARAMETERS_TOOLTIP = "For every controller, whether or not to a add a submodule with a list of its parameters";
 		const string ADD_LAYERS_TOOLTIP = "For every controller, should a submodule containing a list of that controller's layers be added?";
@@ -51,6 +54,19 @@ namespace SOM
 		public override string moduleName
 		{
 			get { return ClassName; }
+		}
+		static bool addAnimatorInts
+		{
+			get
+			{
+				if (!SOMPreferences.bools.Contains(ADD_ANIM_HASH_KEY))
+					addControllerName = true;
+				return SOMPreferences.bools[ADD_ANIM_HASH_KEY];
+			}
+			set
+			{
+				SOMPreferences.bools[ADD_ANIM_HASH_KEY] = value;
+			}
 		}
 		static bool addControllerName
 		{
@@ -247,7 +263,7 @@ namespace SOM
 						//SOMDataHandler.AddModule(layerModule);
 						//And a constant too
 						if (addLayerName)
-							SOMDataHandler.AddConstant(layerModule, "name", controllers[i].layers[j].name);
+							SOMDataHandler.AddConstant(layerModule, "layerName", controllers[i].layers[j].name);
 
 						//And add all of this layer's state machine states
 						AddStateMachineRecursive(controllers[i].layers[j].stateMachine, layerModule);
@@ -325,6 +341,8 @@ namespace SOM
 			addParameters = EditorGUILayout.ToggleLeft(new GUIContent(ADD_PARAMETERS_LABEL, ADD_PARAMETERS_TOOLTIP), addParameters);
 			addLayers = EditorGUILayout.ToggleLeft(new GUIContent(ADD_LAYERS_LABEL, ADD_LAYERS_TOOLTIP), addLayers);
 			GUI.enabled = addLayers;
+			addAnimatorInts = EditorGUILayout.ToggleLeft(new GUIContent(ADD_ANIM_HASH_LABEL, ADD_ANIM_HASH_TOOLTIP), addAnimatorInts);
+
 			//Only if addLayers is active
 			addLayerName = EditorGUILayout.ToggleLeft(new GUIContent(ADD_LAYER_NAME_LABEL, ADD_LAYER_NAME_TOOLTIP), addLayerName);
 			addStates = EditorGUILayout.ToggleLeft(new GUIContent(ADD_STATES_LABEL, ADD_STATES_TOOLTIP), addStates);

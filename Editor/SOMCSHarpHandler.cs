@@ -23,6 +23,7 @@ namespace SOM
 		//========================================
 		// const string NAME = "StringOMatic";
 		const string WITH_ERRORS = "WithErrors";
+		const string MECANIM_NAME = "Mecanim";
 		const string COMPILATION_SUCCESSFUL = "Compilation Successful";
 		const string _public = "public";
 		const string _namespace = "namespace";
@@ -33,7 +34,6 @@ namespace SOM
 		const string _int = "int";
 		const string _openBrace = "{";
 		const string _closeBrace = "}";
-		const string _newLine = "\n";
 		const string _doublefslash = "//";
 		const string _blockQuoteOpen = "/*";
 		const string _blockQuoteClose = "*/";
@@ -44,16 +44,34 @@ namespace SOM
 		private const string _dotCS = ".cs";
 		private const string _dotTxt = ".txt";
 		private enum BraceState { Open, Close }
+		static readonly string _newLine = Environment.NewLine;
 
 		#endregion
+
+		#region Mecanim Consts
+
+		const string _Layers = "Layers";
+		const string _layerName = "layerName";
+		const string _BaseLayer = "BaseLayer";
+		const string _States = "States";
+		const string _StateMachines = "StateMachines";
+		const string _Parameters = "Parameters";
+		const string _Controllers = "Controllers";
+
+
+		#endregion
+
+
+
 
 		#region Properties
 		//Properties
 		//========================================
 		private static string OuterClassName => SOMPreferences.GetClassName();
-		private static string MecanimLayerName { get; set; }
+		private static string CurrentModuleName { get; set; }
 		private static int RemainingOpenBraceCount { get; set; }
 		private static int IndentationLevel { get; set; }
+		private static bool AddAnimatorInts { get; set; }
 		private static StringBuilder _StringBuilder { get; set; }
 		private static Dictionary<string, object> FoundModules { get; set; }
 
@@ -80,6 +98,8 @@ namespace SOM
 
 			IndentationLevel = 0;
 			RemainingOpenBraceCount = 0;
+
+			AddAnimatorInts = SOMPreferences.GetBoolFromPrefs(SOMMecanimModule.ADD_ANIM_HASH_KEY, true);
 		}
 		private static void GenerateCS()
 		{
@@ -156,12 +176,17 @@ namespace SOM
 			}
 			else
 			{
-				SOMUtils.Log(COMPILATION_SUCCESSFUL);
+				SOMUtils.Log($"{COMPILATION_SUCCESSFUL} - File saved to {GetSavePath(outerclassName) + _dotCS}");
 			}
 		}
-		private static void SaveFile(string classname, bool compileSuccess)
+
+		private static string GetSavePath(string className)
 		{
-			string path = SOMUtils.GetValidTargetDir(SOMPreferences.GetTargetDir()) + classname;
+			return SOMUtils.GetValidTargetDir(SOMPreferences.GetTargetDir()) + className;
+		}
+		private static void SaveFile(string className, bool compileSuccess)
+		{
+			string path = GetSavePath(className);
 
 			path += compileSuccess ? _dotCS : WITH_ERRORS + _dotTxt;
 
@@ -243,7 +268,85 @@ namespace SOM
 			return builder.ToString();
 		}
 
-		public static string PrintDictionary(Dictionary<string, object> dict, int indentLevel = 1,
+		public static bool reachedMecanimLayers;
+		public static bool isMecanimModule;
+		public static string previousMecanimBaseLayer;
+		public static string currentMecanimBaseLayer;
+		public static List<string> mecanimKeyPath = new();
+
+		public static bool IsValidMecanimLayerName(string layerName)
+		{
+
+			switch (layerName)
+			{
+				case _Layers: return false;
+				case _StateMachines: return false;
+				case _States: return false;
+				case _Parameters: return false;
+				case _Controllers: return false;
+			}
+
+			return true;
+
+		}
+
+		public static void UpdateMecanimKeyPath(string nameToAdd)
+		{
+			if (mecanimKeyPath.Count == 1 && nameToAdd == mecanimKeyPath[0])
+				return;
+
+			if (currentMecanimBaseLayer != previousMecanimBaseLayer)
+			{
+				previousMecanimBaseLayer = currentMecanimBaseLayer;
+				mecanimKeyPath.Clear();
+				mecanimKeyPath.Add(currentMecanimBaseLayer);
+			}
+			else
+			{
+				mecanimKeyPath.Add(nameToAdd);
+			}
+
+			Debug.Log(string.Join(_dotChar, mecanimKeyPath));
+		}
+
+		private static void CheckForMecanimLayer(this StringBuilder sb, string layerName)
+		{
+			if (reachedMecanimLayers && IsValidMecanimLayerName(layerName))
+			{
+				currentMecanimBaseLayer = layerName;
+
+				UpdateMecanimKeyPath(layerName);
+
+				// sb.WriteLineComment("mecanim layer: " + layerName);
+			}
+
+			if (!reachedMecanimLayers || !isMecanimModule)
+			{
+				reachedMecanimLayers = isMecanimModule && layerName == _Layers;
+			}
+		}
+		private static void CheckAddMecanimConst(this StringBuilder sb, string constName, string constValue, int indent)
+		{
+			if (!isMecanimModule) return;
+
+			if (isMecanimModule && AddAnimatorInts)
+			{
+				// result.WriteLineComment(kvp.Key);
+				if (constName == _layerName)
+				{
+					// sb.WriteLineComment("layername: " + value);
+					currentMecanimBaseLayer = constValue;
+				}
+
+
+				sb.WriteAnimatorInt(constName, constValue, indent);
+				// sb.InsertLineComment(animhashname, indent);
+
+
+			}
+		}
+
+		public static string GetAllConsts(Dictionary<string, object> dict, int indentLevel = 1,
 	HashSet<Dictionary<string, object>> visited = null)
 		{
 			visited ??= new HashSet<Dictionary<string, object>>();
@@ -252,6 +355,8 @@ namespace SOM
 
 			bool reachedStrings = false;
 			bool isRoot = indentLevel == 1;
+
+			isMecanimModule = CurrentModuleName == MECANIM_NAME;
 
 			foreach (var kvp in dict)
 			{
@@ -265,14 +370,18 @@ namespace SOM
 							result.WriteNamespace(SOMUtils.NicifyModuleName(kvp.Key + "Module"), indentLevel);
 							indentLevel++;
 
+							CurrentModuleName = kvp.Key;
 						}
 
 						result.WriteClass(kvp.Key, indentLevel);
 
+						result.CheckForMecanimLayer(kvp.Value as string);
+
+
 						visited.Add(nestedDict);
 						reachedStrings = nestedDict.Values.Any(val => val is string);
 
-						result.Append(PrintDictionary(nestedDict, indentLevel + 1, visited));
+						result.Append(GetAllConsts(nestedDict, indentLevel + 1, visited));
 
 						result.WriteEndClass(indentLevel);
 
@@ -292,6 +401,10 @@ namespace SOM
 				else // Reached strings
 				{
 					result.WriteConstant(kvp.Key, kvp.Value as string, indentLevel);
+
+					result.CheckAddMecanimConst(kvp.Key, kvp.Value as string, indentLevel);
+
+
 				}
 			}
 
@@ -302,7 +415,7 @@ namespace SOM
 		{
 			SOMDictionary db = SOMDataHandler.GetRootData();
 
-			sb.Append(PrintDictionary(db));
+			sb.Append(GetAllConsts(db));
 		}
 
 		private static void WriteConstant(this StringBuilder sb, string constName, string constValue, int indentLevel)
@@ -311,22 +424,33 @@ namespace SOM
 			sb.WriteLine(GetConstString(constName, constValue));
 		}
 
-		public static void WriteAnimatorInt(this StringBuilder sb, string constantValue, string constKey)
+
+		public static void WriteAnimatorInt(this StringBuilder sb, string constantName, string constValue, int indentLevel = 1)
 		{
-			if (MecanimLayerName.EndsWith(constantValue))
-			{
-				MecanimLayerName = MecanimLayerName.Remove(MecanimLayerName.Length - constantValue.Length);
-			}
+			// if (MecanimLayerName.EndsWith(constantValue))
+			// {
+			// 	MecanimLayerName = MecanimLayerName.Remove(MecanimLayerName.Length - constantValue.Length);
+			// }
 
-			string hashName = MecanimLayerName + constantValue;
+			string animhashname = string.Join(_dotChar, currentMecanimBaseLayer, constValue);
 
-			string intLine = $"{_public} {_static} {_int} {constKey}Hash = {Animator.StringToHash(hashName)};";
+			if (currentMecanimBaseLayer == constValue || string.IsNullOrEmpty(currentMecanimBaseLayer))
+				animhashname = constValue;
 
-			WriteLine(sb, intLine);
+
+			// string hashName = layerName + _dotChar + constantName;
+
+			string niceConstKey = SOMUtils.NicifyConstantName(constantName);
+
+			string intLine = $"{_public} {_static} {_int} {niceConstKey}Hash = {Animator.StringToHash(animhashname)};";
+
+			string fullpathcomment = _indentStr + _doublefslash + animhashname;
+
+			sb.WriteIndentations(indentLevel);
+			sb.WriteLine(intLine + fullpathcomment);
 		}
 		static void WriteLine(this StringBuilder sb, string content = "")
 		{
-			WriteIndentations(sb);
 
 			sb.AppendLine(content);
 
@@ -336,11 +460,26 @@ namespace SOM
 		{
 			sb.AppendLine(_blockQuoteOpen + content + _blockQuoteClose);
 		}
-		static void WriteLineComment(this StringBuilder sb, string content = "")
+		static void WriteLineComment(this StringBuilder sb, string content = "", int indent = 1)
 		{
+			sb.WriteIndentations(indent);
 			sb.AppendLine(_doublefslash + content);
 		}
-		static void WriteBrace(this StringBuilder sb, BraceState braceState, int indent = 0)
+		public static void InsertLineComment(this StringBuilder sb, string content = "", int indent = 1)
+		{
+			if (sb.Length > _newLine.Length && sb.ToString(sb.Length - _newLine.Length, _newLine.Length) == _newLine)
+			{
+				// If the last characters are a newline, remove them
+				sb.Remove(sb.Length - _newLine.Length, _newLine.Length);
+
+			}
+
+			int position = sb.Length;
+			sb.Insert(position, _indentStr + _doublefslash + content);
+			// Append newline after the comment
+			sb.Append(_newLine);
+		}
+		static void WriteBrace(this StringBuilder sb, BraceState braceState, int indent = 1)
 		{
 			if (braceState == BraceState.Open)
 			{
