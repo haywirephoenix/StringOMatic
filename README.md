@@ -87,12 +87,13 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 
 >* Create new data structure for storing and generating constants
 >* Update all modules to support new structure
->* Update Rewired module to search for INputManager prefab or scene
+>* Update Rewired module to search for InputManager prefab or scene
 >* Upate Resources module - new project scanning and const gen approach
 
 >* Update Preferences UI + current and backwards compatibility
 >* Add new fields to Preferences UI to customize Path, Class and Namespace
 >* Fix MenuItem methods, with backwards compatibility
+>* New and improved Animator Hash generation
 
 </details>
 
