@@ -180,7 +180,7 @@ namespace SOM
 					logFormat = Debug.LogErrorFormat;
 					break;
 			}
-			logFormat("String-O-Matic {0}: {1}", new string[] { logType.ToString(), message });
+			logFormat("[String-O-Matic] {1}", new string[] { logType.ToString(), message });
 		}
 
 		//=====================================
@@ -283,7 +283,7 @@ namespace SOM
 		/// <summary>
 		/// Returns a default string if the str is empty
 		/// </summary>
-		public static string GetDefaultStringIfEmpty(string _str, string defaultstr = "")
+		public static string GetDefaultStringIfEmpty(string _str, string defaultstr)
 		{
 			if (string.IsNullOrEmpty(_str)) return defaultstr;
 			else return _str;
