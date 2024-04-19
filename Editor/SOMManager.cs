@@ -16,12 +16,12 @@ namespace SOM
 		//=========================================
 		const string VERSION = "2.0.0";
 		const string PREFERENCES_TAB = "String-O-Matic";
-		const string MENU_TAB = "Tools/SOM";
-
+		const string MENU_TAB = "Tools/StringOMatic";
 		public const string VERSION_LABEL = "<b>String-O-Matic</b> version ";
-		public const string CLASSNAME_KEY = "Class Name";
+
+		public const string CLASSNAME_KEY = "ClassName";
 		public const string NAMESPACE_KEY = "Namespace";
-		public const string TARGET_DIRECTORY_KEY = "Target Directory";
+		public const string TARGET_DIRECTORY_KEY = "TargetDirectory";
 		public const string GENERATE_CS_KEY = "GenerateCS";
 		public const string WRITE_COMMENT_KEY = "WriteComment";
 
@@ -46,15 +46,16 @@ namespace SOM
 		//Properties
 		//=========================================
 		//Get a list of all classes that inherit from SOMModule
-		static bool generateCS = true;
-		// static bool generateXML = false;
-		static bool classEnabled = false;
-		static bool namespaceEnabled = false;
-		static bool targetDirEnabled = false;
-		static bool commentEnabled = true;
-		static string classNameText = DEFAULT_CLASS;
-		static string namespaceText = EditorSettings.projectGenerationRootNamespace;
-		static string targetDirectory = DEFAULT_TARGETDIR;
+		static bool generateCS;
+		// static bool generateXML;
+		static bool allEnabled;
+		static bool classEnabled;
+		static bool namespaceEnabled;
+		static bool targetDirEnabled;
+		static bool commentEnabled;
+		static string classNameText;
+		static string namespaceText;
+		static string targetDirectory;
 		static List<SOMModule> _modules;
 		static List<SOMModule> modules
 		{
@@ -149,35 +150,44 @@ namespace SOM
 			return _rect;
 		}
 
-		static string DrawToggleTextField(this string textref, string key, string defaultText, ref bool fieldEnabled)
+		static bool DrawToggleTextField(ref string labelText, string key, string defaultText, ref bool fieldEnabled, bool defaultEnabled = false)
 		{
 			EditorGUILayout.BeginHorizontal();
-			EditorGUI.BeginChangeCheck();
-			fieldEnabled = GUILayout.Toggle(fieldEnabled, string.Empty, GUILayout.Width(13));
 
-			using (new EditorGUI.DisabledScope(!fieldEnabled))
+			EditorGUI.BeginChangeCheck();
+
+			bool isEnabled = GUILayout.Toggle(SOMPreferences.GetBoolFromPrefs(key, defaultEnabled), string.Empty, GUILayout.Width(13));
+
+			using (new EditorGUI.DisabledScope(!isEnabled))
 			{
-				textref = EditorGUILayout.TextField(key, defaultText);
-				SOMPreferences.SetStringInPrefs(key, defaultText);
+				labelText = EditorGUILayout.TextField(key, SOMPreferences.GetStringFromPrefs(key, defaultText));
 			}
 
 			if (EditorGUI.EndChangeCheck())
 			{
+				fieldEnabled = isEnabled;
+
+				SOMPreferences.SetBoolInPrefs(key, isEnabled);
+
 				if (!fieldEnabled)
 				{
-					textref = defaultText;
-					ResetToggleTextField(ref textref, key, defaultText);
-					EditorWindow.GetWindow<UnityEditor.EditorWindow>().Repaint();
+					labelText = defaultText;
+					SOMPreferences.SetStringInPrefs(key, defaultText);
 				}
 				else
 				{
-					SaveToggleTextField(ref textref, key, textref, defaultText);
+					string safeValue = SOMUtils.GetDefaultStringIfEmpty(labelText, defaultText);
+					if (defaultText == DEFAULT_TARGETDIR)
+						safeValue = SOMUtils.CleanPath(safeValue);
+					SOMPreferences.SetStringInPrefs(key, safeValue);
 				}
+
+				EditorWindow.GetWindow<UnityEditor.EditorWindow>().Repaint();
 			}
 
 			EditorGUILayout.EndHorizontal();
 
-			return textref;
+			return fieldEnabled;
 		}
 
 
@@ -255,9 +265,13 @@ namespace SOM
 			commentEnabled.DrawToggleField(WRITE_COMMENT, WRITE_COMMENT_KEY, true);
 			// generateXML.DrawToggleField("Generate XML file", "GenerateXML", false);
 			GUILayout.Space(20);
-			classNameText.DrawToggleTextField(CLASSNAME_KEY, DEFAULT_CLASS, ref classEnabled);
-			namespaceText.DrawToggleTextField(NAMESPACE_KEY, EditorSettings.projectGenerationRootNamespace, ref namespaceEnabled);
-			targetDirectory.DrawToggleTextField(TARGET_DIRECTORY_KEY, DEFAULT_TARGETDIR, ref targetDirEnabled);
+
+
+			DrawToggleTextField(ref classNameText, CLASSNAME_KEY, DEFAULT_CLASS, ref classEnabled);
+
+			DrawToggleTextField(ref namespaceText, NAMESPACE_KEY, EditorSettings.projectGenerationRootNamespace, ref namespaceEnabled);
+
+			DrawToggleTextField(ref targetDirectory, TARGET_DIRECTORY_KEY, DEFAULT_TARGETDIR, ref targetDirEnabled);
 
 			GUILayout.Space(20);
 
@@ -340,15 +354,15 @@ namespace SOM
 			GUILayout.EndVertical();
 		}
 
-		// [MenuItem(MENU_TAB + "/Refresh %#r")]
+		[MenuItem(MENU_TAB + "/Refresh %#r")]
 		public static void RefreshMenu()
 		{
 			SOMDataHandler.CreateDatabase();
 			RefreshAll();
 			SOMDataHandler.Save();
 
-			if (SOMPreferences.GetBoolFromPrefs(GENERATE_CS_KEY, generateCS))
-				SOMCSHarpHandler.Compile();
+			// if (SOMPreferences.GetBoolFromPrefs(GENERATE_CS_KEY, generateCS))
+			SOMCSHarpHandler.Compile();
 		}
 
 		[MenuItem(MENU_TAB + "/Preferences %#c")]
