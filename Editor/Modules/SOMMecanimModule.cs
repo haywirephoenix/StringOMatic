@@ -165,7 +165,7 @@ namespace SOM
 			get
 			{
 				if (_list == null)
-					_list = new SOMUtils.FilterList(moduleName, "Controller names", SOMUtils.FilterList.FilterType.White);
+					_list = new SOMUtils.FilterList(moduleName, "Controller names", SOMUtils.FilterList.FilterType.Black);
 				return _list;
 			}
 		}
