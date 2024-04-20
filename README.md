@@ -7,9 +7,7 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 <summary><b>Description</b></summary>
 <br/>
  Unity's policy for implementing **magic strings** in almost all of its systems **is one the major sources of bugs** **and headaches**, especially for amateurs. **Using constant values** instead of relying on magic strings heavily **reduces** the amount of **runtime errors.**
-
-<br/>
-
+<br/><br/>
  **String-O-Matic** scans your project based on your needs to automatically **generate constants and static classes** holding references to all of those magic strings, effectively **replacing** soft **runtime errors by** robust **compile errors.**  
    
  </details>
@@ -55,12 +53,12 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 <br/>
 
 
-- [ ] Support package manager git url
 - [ ] Add "Update Available" banner with Update button in preferences
 - [ ] Fix filter lists, make universal filter template
 - [ ] Add filter lists for more categories
 - [ ] Add directory selection shortcut
 - [ ] Add whitelist object field
+- [x] Support package manager git url (Complete)
 - [x] Animator hash generation (Complete)
 - [x] Improved compatibility with newer versions of Unity (Complete)
 - [x] Text fields to specify the namespace, target directory, and class name. (Complete)
@@ -69,6 +67,36 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 
 
 </details>
+
+<details>
+<summary><b>Installation</b></summary>
+<br/>
+
+### Install from a Git URL
+Yoy can also install this package via Git URL. To load a package from a Git URL:
+
+* Open [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui.html) window.
+* Click the add **+** button in the status bar.
+* The options for adding packages appear.
+* Select Add package from git URL from the add menu. A text box and an Add button appear.
+* Enter the `https://github.com/haywirephoenix/StringOMatic.git` Git URL in the text box and click Add.
+
+<br/>
+</details>
+
+<details>
+<summary><b>Usage</b></summary>
+<br/>
+
+* Open Preferences > String-O-Matic or Tools > String-O-Matic > Preferences
+* Toggle the modules that you want to generate - click on them as some have more sub options.
+* Toggle any of the customization options at the top if you would like to change them.
+* Press the Refresh All button at the bottom.
+* Your new consts file will be generated in your project.
+
+<br/>
+</details>
+
 
 <details>
 <summary><b>Updates</b></summary>
@@ -97,6 +125,10 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 >* Add new fields to Preferences UI to customize Path, Class and Namespace
 >* Fix MenuItem methods, with backwards compatibility
 >* New and improved Animator Hash generation
+
+>##### v2.0.1 - 2.0.3:
+>* Fix minor bugs
+>* Add package manager support
 
 </details>
 
