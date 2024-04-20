@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.PackageManager;
 
 namespace SOM
 {
@@ -14,7 +16,7 @@ namespace SOM
 		//=========================================
 		//Consts
 		//=========================================
-		const string VERSION = "2.0.1";
+		const string VERSION = "2.0.3";
 		const string PREFERENCES_TAB = "String-O-Matic";
 		const string MENU_TAB = "Tools/StringOMatic";
 		public const string VERSION_LABEL = "<b>String-O-Matic</b> version ";
@@ -218,6 +220,14 @@ namespace SOM
 			SOMPreferences.SetBoolInPrefs(key, newValue);
 		}
 
+		private static bool Init = false;
+
+		static void OnInit()
+		{
+			Init = true;
+		}
+
+
 
 #if UNITY_2018_3_OR_NEWER
 		private class SOMSettingsProvider : SettingsProvider
@@ -245,6 +255,12 @@ namespace SOM
 		static void OnPreferences()
 		{
 
+			if (!Init)
+			{
+
+				OnInit();
+			}
+
 			EditorGUILayout.BeginHorizontal();
 			GUILayout.FlexibleSpace();
 			EditorGUILayout.EndHorizontal();
@@ -264,7 +280,10 @@ namespace SOM
 
 			DrawToggleTextField(ref classNameText, CLASSNAME_KEY, DEFAULT_CLASS, ref classEnabled);
 
-			DrawToggleTextField(ref namespaceText, NAMESPACE_KEY, EditorSettings.projectGenerationRootNamespace, ref namespaceEnabled);
+			string projectNamespace = EditorSettings.projectGenerationRootNamespace;
+			string defaultNamespace = string.IsNullOrEmpty(projectNamespace) ? DEFAULT_NAMESPACE : projectNamespace;
+
+			DrawToggleTextField(ref namespaceText, NAMESPACE_KEY, defaultNamespace, ref namespaceEnabled);
 
 			DrawToggleTextField(ref targetDirectory, TARGET_DIRECTORY_KEY, DEFAULT_TARGETDIR, ref targetDirEnabled);
 
