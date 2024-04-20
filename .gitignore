@@ -74,4 +74,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 StringOMatic.cs
 Editor/SOMPathUtil.cs.meta
+StringOMaticWithErrors.txt
 
