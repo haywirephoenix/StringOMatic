@@ -14,7 +14,7 @@ namespace SOM
 		//=========================================
 		//Consts
 		//=========================================
-		const string VERSION = "2.0.0";
+		const string VERSION = "2.0.1";
 		const string PREFERENCES_TAB = "String-O-Matic";
 		const string MENU_TAB = "Tools/StringOMatic";
 		public const string VERSION_LABEL = "<b>String-O-Matic</b> version ";
