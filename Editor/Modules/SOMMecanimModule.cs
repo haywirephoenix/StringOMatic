@@ -225,6 +225,8 @@ namespace SOM
 			{
 				string controllerModule = subModule + "." + controllers[i].name;
 
+
+
 				if (IsFiltered(controllers[i].name)) continue;
 				//Check if it's name isn't duplicated
 				try
