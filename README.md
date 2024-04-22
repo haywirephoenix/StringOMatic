@@ -58,6 +58,7 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 - [ ] Add filter lists for more categories
 - [ ] Add directory selection shortcut
 - [ ] Add whitelist object field
+- [ ] Add Addressables feature
 - [x] Support package manager git url (Complete)
 - [x] Animator hash generation (Complete)
 - [x] Improved compatibility with newer versions of Unity (Complete)
@@ -85,7 +86,7 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 </details>
 
 <details>
-<summary><b>Usage</b></summary>
+<summary><b>Getting Started</b></summary>
 <br/>
 
 * Open Preferences > String-O-Matic or Tools > String-O-Matic > Preferences
@@ -93,6 +94,27 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 * Toggle any of the customization options at the top if you would like to change them.
 * Press the Refresh All button at the bottom.
 * Your new consts file will be generated in your project.
+
+<br/>
+</details>
+
+
+<details>
+<summary><b>Mecanim Usage</b></summary>
+<br/>
+
+Once you've generated your constants, in your project you will have access to all the module namespaces such as:
+```csharp 
+using StringOMatic.MecanimModule;
+```
+Or you can create a shortcut to a specific class, for example:
+```csharp 
+using SwordShieldParams = StringOMatic.MecanimModule.Mecanim.Controllers.SwordShield.Parameters;
+```
+Then you can reference them like this:
+```csharp 
+animator.SetFloat(SwordShieldParams.horizontalFullPathHash,x);
+```
 
 <br/>
 </details>
