@@ -155,6 +155,39 @@ await handle.Task;
 if (handle.Status == AsyncOperationStatus.Succeeded)
 {
     AnimationClip[] myFBXAnims = handle.Result;
+}
+```
+
+Loading a SubAsset (for example an animationclip in a bundled fbx):
+
+```csharp 
+var handle = Addressables.LoadAssetAsync<AnimationClip>(AddressablesStatics.MyAnimations.SubAssets.myanimationClip);
+
+await handle.Task;
+
+if (handle.Status == AsyncOperationStatus.Succeeded)
+{
+    AnimationClip myanimationClip = handle.Result;   
+}
+```
+
+<br/>
+</details>
+
+<details>
+<summary><b>Addressables Usage</b></summary>
+<br/>
+
+Loading all the animation clips in a bundled fbx:
+
+```csharp
+var handle = Addressables.LoadAssetAsync<AnimationClip[]>(AddressablesStatics.MyAnimations.mainAssetPath);
+
+await handle.Task;
+
+if (handle.Status == AsyncOperationStatus.Succeeded)
+{
+    AnimationClip[] myFBXAnims = handle.Result;
 
 }
 ```
