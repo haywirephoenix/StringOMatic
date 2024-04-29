@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using UnityEditor.Animations;
@@ -249,7 +249,21 @@ namespace SOM
 					string parametersModule = controllerModule + ".parameters";
 					//SOMDataHandler.AddModule(parametersModule);
 					for (int j = 0; j < controllers[i].parameters.Length; j++)
-						SOMDataHandler.AddConstant(parametersModule, SOMUtils.NicifyConstantName(controllers[i].parameters[j].name), controllers[i].parameters[j].name);
+					{
+
+						AnimatorControllerParameter parameter = controllers[i].parameters[j];
+						string NiceParameterName = SOMUtils.NicifyConstantName(parameter.name);
+
+						SOMDataHandler.AddConstant(parametersModule, NiceParameterName, parameter.name);
+
+						if (addAnimatorInts)
+						{
+
+							SOMDataHandler.AddConstant(parametersModule, NiceParameterName + "NameHash", parameter.nameHash);
+
+						}
+
+					}
 				}
 
 				//Add layers module
@@ -260,15 +274,18 @@ namespace SOM
 					//And for each layer
 					for (int j = 0; j < controllers[i].layers.Length; j++)
 					{
-						string layerModule = layersModule + "." + controllers[i].layers[j].name;
+						string layerName = controllers[i].layers[j].name;
+						string layerModule = layersModule + "." + layerName;
 						//Add a layer with its name
 						//SOMDataHandler.AddModule(layerModule);
 						//And a constant too
 						if (addLayerName)
 							SOMDataHandler.AddConstant(layerModule, "layerName", controllers[i].layers[j].name);
 
+
+
 						//And add all of this layer's state machine states
-						AddStateMachineRecursive(controllers[i].layers[j].stateMachine, layerModule);
+						AddStateMachineRecursive(controllers[i].layers[j].stateMachine, layerModule, layerName);
 					}
 				}
 
@@ -278,7 +295,7 @@ namespace SOM
 		}
 
 		//Given a state machine, this module adds all of its states and sub state machines
-		void AddStateMachineRecursive(AnimatorStateMachine stateMachine, string ownerModule)
+		void AddStateMachineRecursive(AnimatorStateMachine stateMachine, string ownerModule, string layerName)
 		{
 			//Add a constant for every state
 			if (addStates)
@@ -289,13 +306,21 @@ namespace SOM
 					//SOMDataHandler.AddModule(statesModule);
 					for (int i = 0; i < stateMachine.states.Length; i++)
 					{
+						AnimatorState state = stateMachine.states[i].state;
+						string stateName = state.name;
+						string niceStateName = SOMUtils.NicifyConstantName(stateName);
 
-						SOMDataHandler.AddConstant(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name), stateMachine.states[i].state.name);
+						SOMDataHandler.AddConstant(statesModule, niceStateName, stateName);
 
-						// if (addStringTOHash)
-						// {
-						//     SOMDatabase.AddInt(statesModule, SOMUtils.NicifyConstantName(stateMachine.states[i].state.name) + "Hash", stateMachine.states[i].state.name);
-						// }
+						if (addAnimatorInts)
+						{
+							string fullPath = $"{layerName}.{stateName}";
+							int fullpathHash = Animator.StringToHash(fullPath);
+
+							SOMDataHandler.AddConstant(statesModule, niceStateName + "NameHash", state.nameHash);
+							SOMDataHandler.AddConstant(statesModule, niceStateName + "FullPathHash", fullpathHash);
+
+						}
 					}
 				}
 			}
@@ -310,21 +335,27 @@ namespace SOM
 					//add a module of their own with...
 					for (int i = 0; i < stateMachine.stateMachines.Length; i++)
 					{
-						string stateMachineName = stateMachine.stateMachines[i].stateMachine.name;
+						AnimatorStateMachine childStateMachine = stateMachine.stateMachines[i].stateMachine;
+						string stateMachineName = childStateMachine.name;
 						string stateMachineModule = subStateMachinesModule + "." + stateMachineName;
+
 						//SOMDataHandler.AddModule(stateMachineModule);
 						//Its name...
 						if (addStateMachineName)
 						{
+
 							SOMDataHandler.AddConstant(stateMachineModule, "name", stateMachineName);
 
-							// if (addStringTOHash)
-							// {
-							//     SOMDatabase.AddInt(stateMachineModule, "nameHash", stateMachineName);
-							// }
+							if (addAnimatorInts)
+							{
+								string fullPath = $"{layerName}.{stateMachineName}";
+
+								SOMDataHandler.AddConstant(stateMachineModule, "NameHash", Animator.StringToHash(stateMachineName));
+								SOMDataHandler.AddConstant(stateMachineModule, "FullPathHash", Animator.StringToHash(fullPath));
+							}
 						}
 						//And all of its states
-						AddStateMachineRecursive(stateMachine.stateMachines[i].stateMachine, stateMachineModule);
+						AddStateMachineRecursive(stateMachine.stateMachines[i].stateMachine, stateMachineModule, layerName);
 					}
 				}
 			}
@@ -332,7 +363,7 @@ namespace SOM
 
 		}
 
-		// bool addStringTOHash = true;
+		// bool addAnimatorInts = true;
 
 		//===================================
 		//Repaint
