@@ -201,6 +201,8 @@ namespace SOM
 
 			HasRootNamespace(out namespaceName);
 
+			NamespaceName = namespaceName;
+
 			sb.WriteNamespace(namespaceName);
 
 		}
