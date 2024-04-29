@@ -121,7 +121,7 @@ using MyControllerParams = StringOMatic.MecanimModule.MecanimStatics.Controllers
 ```
 Then you can reference them like this:
 ```csharp 
-animator.SetFloat(MyControllerParams.horizontalFullPathHash,x);6
+animator.SetFloat(MyControllerParams.horizontalFullPathHash,x);
 ```
 
 <br/>
@@ -156,7 +156,6 @@ await handle.Task;
 if (handle.Status == AsyncOperationStatus.Succeeded)
 {
     AnimationClip[] myFBXAnims = handle.Result;
-
 }
 ```
 
@@ -169,7 +168,6 @@ await handle.Task;
 
 if (handle.Status == AsyncOperationStatus.Succeeded)
 {
-
     AnimationClip myanimationClip = handle.Result;   
 }
 ```
