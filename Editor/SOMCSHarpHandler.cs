@@ -540,30 +540,8 @@ namespace SOM
 			sb.WriteIndentations(indentLevel);
 			sb.WriteLine(GetConstString(constName, constValue));
 		}
-
-
-		public static void WriteAnimatorInt(this StringBuilder sb, string constantName, string constValue, int indentLevel = 1)
+		private static void WriteConstant(this StringBuilder sb, string constName, object constValue, int indentLevel)
 		{
-			// if (MecanimLayerName.EndsWith(constantValue))
-			// {
-			// 	MecanimLayerName = MecanimLayerName.Remove(MecanimLayerName.Length - constantValue.Length);
-			// }
-
-			string animhashname = string.Join(_dotChar, currentMecanimBaseLayer, constValue);
-
-			if (currentMecanimBaseLayer == constValue || string.IsNullOrEmpty(currentMecanimBaseLayer))
-				animhashname = constValue;
-
-
-			// string hashName = layerName + _dotChar + constantName;
-
-			string niceConstKey = SOMUtils.NicifyConstantName(constantName);
-
-			string nameIntLine = $"{_public} {_static} {_int} {niceConstKey}Hash = {Animator.StringToHash(constValue)};";
-			string fullPathIntLine = $"{_public} {_static} {_int} {niceConstKey}FullPathHash = {Animator.StringToHash(animhashname)};";
-
-			string fullpathcomment = _indentStr + _doublefslash + animhashname;
-
 			sb.WriteIndentations(indentLevel);
 			sb.WriteLine(nameIntLine);
 			sb.WriteIndentations(indentLevel);
