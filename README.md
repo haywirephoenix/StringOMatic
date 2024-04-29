@@ -6,9 +6,9 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 <details>
 <summary><b>Description</b></summary>
 <br/>
- Unity's policy for implementing **magic strings** in almost all of its systems **is one the major sources of bugs** **and headaches**, especially for amateurs. **Using constant values** instead of relying on magic strings heavily **reduces** the amount of **runtime errors.**
+ Unity's policy for implementing magic strings in almost all of its systems is one the major sources of bugs and headaches, especially for amateurs. Using constant values instead of relying on magic strings heavily reduces the amount of runtime errors.
 <br/><br/>
- **String-O-Matic** scans your project based on your needs to automatically **generate constants and static classes** holding references to all of those magic strings, effectively **replacing** soft **runtime errors by** robust **compile errors.**  
+ String-O-Matic scans your project based on your needs to automatically generate constants and static classes holding references to all of those magic strings, effectively replacing soft runtime errors by robust compile errors.  
    
  </details>
 
@@ -58,7 +58,9 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 - [ ] Add filter lists for more categories
 - [ ] Add directory selection shortcut
 - [ ] Add whitelist object field
-- [ ] Add Addressables feature
+- [ ] Udate docs for module creation in the new format
+- [x] Add Addressables feature (Complete - in testing)
+- [x] Add support for multiple constant types (Complete)
 - [x] Support package manager git url (Complete)
 - [x] Animator hash generation (Complete)
 - [x] Improved compatibility with newer versions of Unity (Complete)
@@ -100,7 +102,7 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 
 
 <details>
-<summary><b>Mecanim Usage</b></summary>
+<summary><b>Usage</b></summary>
 <br/>
 
 Once you've generated your constants, in your project you will have access to all the module namespaces such as:
@@ -119,6 +121,19 @@ animator.SetFloat(SwordShieldParams.horizontalFullPathHash,x);
 <br/>
 </details>
 
+<details>
+<summary><b>Addressables</b></summary>
+<br/>
+
+If you have the Unity Addressables package installed, the Addressables module should now be included in the preferences window. When enabled, it will generate constant strings from you Addressables: 
+
+MainAsset - AddressableAssetEntry.AssetPath, AddressableAssetGroup.Guid
+SubAssets - AddressableAssetEntry.address
+
+The MainAsset GUID is stored as a string, the same as Unity stores it.
+
+<br/>
+</details>
 
 <details>
 <summary><b>Updates</b></summary>
@@ -151,6 +166,10 @@ animator.SetFloat(SwordShieldParams.horizontalFullPathHash,x);
 >##### v2.0.1 - 2.0.3:
 >* Fix minor bugs
 >* Add package manager support
+
+>##### v2.0.4:
+>* Add addressables support
+>* Add support for multiple constant types
 
 </details>
 

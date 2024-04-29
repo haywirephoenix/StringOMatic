@@ -53,8 +53,7 @@ namespace SOM
         {
             if (SOMDataHandler.Singleton.IResourcesNeedAssigning)
             {
-
-                SOMDataHandler.Singleton.IResourcesNeedAssigning = false;
+                // SOMDataHandler.Singleton.IResourcesNeedAssigning = false;
                 AssignIResources();
             }
 

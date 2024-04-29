@@ -223,7 +223,7 @@ namespace SOM
 			if (foundResourceLoc != null)
 			{
 				// Debug.Log("added " + foundResourceLoc);
-				SOMDataHandler.AddConstant(constPath, "iResourceLocation", foundResourceLoc);
+				// SOMDataHandler.AddConstant(constPath, "iResourceLocation", foundResourceLoc);
 			}
 		}
 
