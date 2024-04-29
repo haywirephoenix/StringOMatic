@@ -36,7 +36,7 @@ namespace SOM
 		//========================================
 		//Vars
 		//========================================
-		SOMUtils.FilterList _list;
+		SOMFilters.FilterList _list;
 		//This is a list of built-in shader names for every supported version of Unity
 		string[] builtIn = new string[]{
 			#if UNITY_5_0 || UNITY_5_1
@@ -312,12 +312,12 @@ namespace SOM
 				SOMPreferences.bools[SEPARATE_SHADERS_KEY] = value;
 			}
 		}
-		SOMUtils.FilterList list
+		SOMFilters.FilterList list
 		{
 			get
 			{
 				if (_list == null)
-					_list = new SOMUtils.FilterList(moduleName, "Shader names", SOMUtils.FilterList.FilterType.Black);
+					_list = new SOMFilters.FilterList(moduleName, "Shader names", SOMFilters.FilterList.FilterType.Black);
 				return _list;
 			}
 		}

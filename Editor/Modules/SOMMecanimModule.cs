@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using UnityEditor.Animations;
@@ -159,13 +159,13 @@ namespace SOM
 				SOMPreferences.bools[ADD_STATE_MACHINES_NAME_KEY] = value;
 			}
 		}
-		SOMUtils.FilterList _list;
-		SOMUtils.FilterList list
+		SOMFilters.FilterList _list;
+		SOMFilters.FilterList list
 		{
 			get
 			{
 				if (_list == null)
-					_list = new SOMUtils.FilterList(moduleName, "Controller names", SOMUtils.FilterList.FilterType.Black);
+					_list = new SOMFilters.FilterList(moduleName, "Controller names", SOMFilters.FilterList.FilterType.Black);
 				return _list;
 			}
 		}
