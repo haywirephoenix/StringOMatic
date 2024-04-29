@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using static SOM.LanguageConsts;
 
 namespace SOM
 {
@@ -8,7 +9,7 @@ namespace SOM
     {
         public string Path { get; set; }
         public string ConstName { get; set; }
-        public string ConstValue { get; set; }
+        public object ConstValue { get; set; }
 
 
         public string[] PathSplit { get; set; }
@@ -18,7 +19,7 @@ namespace SOM
         public string PathWithoutRoot { get; set; }
 
 
-        public SOMPathData(string path, string constName, string constValue = "")
+        public SOMPathData(string path, string constName, object constValue = null)
         {
             Path = path;
             ConstName = constName;
@@ -31,7 +32,7 @@ namespace SOM
     {
         public static string GetConstantClassPath(string constFullPath)
         {
-            int lastDotIndex = constFullPath.LastIndexOf(SOMUtils.dotChar);
+            int lastDotIndex = constFullPath.LastIndexOf(_dotChar);
             if (lastDotIndex != -1)
             {
                 return constFullPath.Substring(0, lastDotIndex);
@@ -43,23 +44,23 @@ namespace SOM
         }
         public static string MakeConstantKeyPath(string constPath, string constValue)
         {
-            return string.Join(SOMUtils.dotChar, constPath, constValue);
+            return string.Join(_dotChar, constPath, constValue);
         }
         public static string MakeConstantKeyPath(SOMPathData sompathData)
         {
-            return string.Join(SOMUtils.dotChar, sompathData.Path, sompathData.ConstName);
+            return string.Join(_dotChar, sompathData.Path, sompathData.ConstName);
         }
         public static string MakeConstantFullPath(string constPath, string constName, string constValue)
         {
-            return string.Join(SOMUtils.dotChar, constPath, constName, constValue);
+            return string.Join(_dotChar, constPath, constName, constValue);
         }
         public static string MakeConstantFullPath(SOMPathData sompathData)
         {
-            return string.Join(SOMUtils.dotChar, sompathData.Path, sompathData.ConstName, sompathData.ConstValue);
+            return string.Join(_dotChar, sompathData.Path, sompathData.ConstName, sompathData.ConstValue);
         }
         public static string NicifyPath(string path)
         {
-            string[] patharr = path.Split(SOMUtils.dotChar);
+            string[] patharr = path.Split(_dotChar);
             string[] newPatharr = new string[patharr.Length];
 
             for (int i = 0; i < patharr.Length; i++)
@@ -67,7 +68,7 @@ namespace SOM
                 newPatharr[i] = SOMUtils.NicifyModuleName(patharr[i]);
             }
 
-            return string.Join(SOMUtils.dotChar, newPatharr);
+            return string.Join(_dotChar, newPatharr);
         }
 
         public static SOMPathData SplitModulePath(string modulePath, out string[] modulePathSplit, bool containsConst = false)
@@ -79,7 +80,7 @@ namespace SOM
                 throw new ArgumentException("Module path cannot be null or empty.", nameof(modulePath));
             }
 
-            modulePathSplit = modulePath.Split(SOMUtils.dotChar);
+            modulePathSplit = modulePath.Split(_dotChar);
             string constName = "";
             string constVal = "";
 
@@ -106,7 +107,7 @@ namespace SOM
             string pathWithoutRoot = string.Join(".", modulePathSplit.Skip(1));
 
             // Split the path without the root module
-            string[] splitPathWithoutRoot = pathWithoutRoot.Split(SOMUtils.dotChar);
+            string[] splitPathWithoutRoot = pathWithoutRoot.Split(_dotChar);
 
             return new SOMPathData(modulePath, constName, constVal)
             {
@@ -121,7 +122,7 @@ namespace SOM
 
         private static string ShortenModulePath(string modulePath, int endIndex)
         {
-            string[] modulePathSplit = modulePath.Split(SOMUtils.dotChar);
+            string[] modulePathSplit = modulePath.Split(_dotChar);
             return ShortenModulePath(modulePathSplit, endIndex);
         }
 

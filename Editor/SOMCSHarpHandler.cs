@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -25,25 +25,7 @@ namespace SOM
 		const string WITH_ERRORS = "WithErrors";
 		const string MECANIM_NAME = "Mecanim";
 		const string COMPILATION_SUCCESSFUL = "Compilation Successful";
-		const string _public = "public";
-		const string _namespace = "namespace";
-		const string _static = "static";
-		const string _const = "const";
-		const string _class = "class";
-		const string _struct = "struct";
-		const string _string = "string";
-		const string _int = "int";
-		const string _openBrace = "{";
-		const string _closeBrace = "}";
-		const string _doublefslash = "//";
-		const string _blockQuoteOpen = "/*";
-		const string _blockQuoteClose = "*/";
-		private const Char _dotChar = '.';
-		private const Char _indentChar = '\t';
-		private const string _indentStr = "\t";
-		private const string _dotStr = ".";
-		private const string _dotCS = ".cs";
-		private const string _dotTxt = ".txt";
+
 		private enum BraceState { Open, Close }
 		static readonly string _newLine = Environment.NewLine;
 

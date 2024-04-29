@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEditor;
@@ -13,11 +13,6 @@ namespace SOM
 	/// </summary>
 	public static class SOMUtils
 	{
-
-		public const Char dotChar = '.';
-		public const Char colonChar = ':';
-		public const Char underscoreChar = '.';
-		public const String dotStr = ".";
 
 		//=====================================
 		//Nicify Methods
