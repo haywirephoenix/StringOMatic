@@ -178,13 +178,14 @@ namespace SOM
 				if (!fieldEnabled)
 				{
 					ResetToggleTextField(ref textref, key, defaultText);
+					EditorWindow.GetWindow<UnityEditor.EditorWindow>().Repaint();
 				}
 				else
 				{
 					SaveToggleTextField(key, textref, defaultText);
 				}
 
-				EditorWindow.GetWindow<UnityEditor.EditorWindow>().Repaint();
+
 			}
 
 			EditorGUILayout.EndHorizontal();
