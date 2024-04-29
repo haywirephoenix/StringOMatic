@@ -18,7 +18,7 @@ namespace SOM
 		/// <summary>
 		/// The key name used on SOMPreferences to check if this module needs to be refreshed
 		/// </summary>
-		string needsRefreshingKey
+		public string needsRefreshingKey
 		{
 			get { return moduleName + " Needs Refreshing"; }
 		}
@@ -27,7 +27,7 @@ namespace SOM
 		/// Gets or sets a value indicating whether this module needs refreshing.
 		/// </summary>
 		/// <value><c>true</c> if needs refreshing; otherwise, <c>false</c>.</value>
-		public bool needsRefreshing
+		public virtual bool needsRefreshing
 		{
 			get
 			{
@@ -55,12 +55,12 @@ namespace SOM
 		public virtual void DrawPreferences()
 		{
 			//Pressing this button forces this module to refresh
-			if (GUILayout.Button(FORCE_REFRESH))
-			{
-				SOMManager.Refresh(moduleName, false);
-				SOMDataHandler.Save();
-				SOMCSHarpHandler.Compile();
-			}
+			// if (GUILayout.Button(FORCE_REFRESH))
+			// {
+			// 	SOMManager.Refresh(moduleName, false);
+			// 	SOMDataHandler.Save();
+			// 	SOMCSHarpHandler.Compile();
+			// }
 		}
 	}
 }
