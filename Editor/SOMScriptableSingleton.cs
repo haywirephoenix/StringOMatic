@@ -38,7 +38,7 @@ namespace SOM
                 guids = AssetDatabase.FindAssets(typeof(T).Name);
                 if (guids.Length == 0)
                     throw new FileNotFoundException("File could not be found");
-                string targetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
+                string targetPath = "Assets/StringOMatic/";
                 targetPath = targetPath.Substring(0, targetPath.LastIndexOf("/"));
                 assetPath = targetPath + "/" + Name + ".asset";
                 AssetDatabase.CreateAsset(singleton, assetPath);
