@@ -78,6 +78,7 @@ LICENSE
 LICENSE.meta
 
 Editor/SOMPreferences.asset
+Editor/SOMPreferences.asset.meta
 Editor/SOMDataHandler.asset
 Editor/SOMDataHandler.asset.meta
 StringOMaticWithErrors.txt.meta
