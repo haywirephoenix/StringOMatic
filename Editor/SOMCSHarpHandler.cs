@@ -201,8 +201,6 @@ namespace SOM
 
 			HasRootNamespace(out namespaceName);
 
-			NamespaceName = namespaceName;
-
 			sb.WriteNamespace(namespaceName);
 
 		}
@@ -225,6 +223,128 @@ namespace SOM
 		private static string GetStructString(string structName)
 		{
 			return $"{_public} {_struct} {structName}";
+		}
+
+		private static readonly Dictionary<Type, string> validTypes = new()
+		{
+			{ typeof(System.String), "string" },
+			{ typeof(System.Int32), "int" },
+			{ typeof(System.Single), "float" },
+			{ typeof(System.Double), "double" },
+			{ typeof(System.Boolean), "bool" },
+			{ typeof(System.DateTime), "DateTime" },
+			{ typeof(System.Decimal), "decimal" },
+			{ typeof(System.Char), "char" },
+			{ typeof(System.Guid), "string" }
+		};
+
+		private static string TypeToString(object obj)
+		{
+			Type type = obj.GetType();
+			// Check if the type has a mapping in the dictionary
+			if (validTypes.ContainsKey(type))
+			{
+				return validTypes[type];
+			}
+			else
+			{
+				// Return the type name as is
+				return "object";
+			}
+		}
+
+
+		public static bool CanBeStatic(Type type)
+		{
+			if (type.IsClass || type.IsInterface || type == typeof(Guid))
+			{
+				return true; // Classes and interfaces can have static members
+			}
+			else if (type.IsEnum || type.IsValueType)
+			{
+				return false;
+			}
+			else if (typeof(Delegate).IsAssignableFrom(type)) // Delegates cannot be static
+			{
+				return false;
+			}
+			else
+			{
+				// Unknown type, assuming it can't be static
+				return false;
+			}
+		}
+
+		public static bool CanBeConst(Type type)
+		{
+			if ((type.IsEnum || IsPrimitiveType(type)) && type != typeof(Guid))
+			{
+				return true; // Enums and primitive types can be used for const variables
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		private static bool IsPrimitiveType(Type type)
+		{
+			return type.IsPrimitive || type == typeof(decimal) || type == typeof(string);
+		}
+
+		private static object FormatConstantValue(object constValue)
+		{
+			if (!validTypes.ContainsKey(constValue.GetType()))
+			{
+				return "";
+			}
+
+			return constValue switch
+			{
+				string => $"\"{constValue}\"",
+				float => constValue + "f",
+				Guid => $"\"{constValue}\"",
+				int => constValue,
+				// Guid => $"new Guid(\"{constValue}\")",
+				// #if SOM_ADDRESSABLES
+				// 				ResourceLocationBase => "",
+				// #endif
+				_ => constValue,
+			};
+		}
+
+
+
+		private static string GetConstString(string constName, object constValue)
+		{
+
+#if SOM_ADDRESSABLES
+			SOMAddressablesHandler.ValidateAndStoreResLoc(pathBuilder, NamespaceName, constName, constValue);
+#endif
+
+			Type objType = constValue.GetType();
+
+			object formattedValue = FormatConstantValue(constValue);
+
+			StringBuilder sb = new();
+
+			sb.Append($"{_public} ");
+
+			if (CanBeConst(objType))
+			{
+				sb.Append($"{_const} ");
+			}
+			else if (CanBeStatic(objType))
+			{
+				sb.Append($"{_static} ");
+			}
+
+			string typeName = TypeToString(constValue);
+			string equalsSymbol = !string.IsNullOrEmpty(formattedValue.ToString()) ? " = " : "";
+
+			sb.Append($"{typeName} {constName}{equalsSymbol}{formattedValue};");
+
+			return sb.ToString();
 		}
 		private static string GetConstString(string constName, string constValue)
 		{
