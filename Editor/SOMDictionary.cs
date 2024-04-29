@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace SOM
 {
@@ -7,22 +8,22 @@ namespace SOM
     {
         private const Char pathSeparator = '.';
         private SortedList<string, string> flatData = new();
-        public void Add(string path, string key, string value)
+        public void Add(string path, string key, object value)
         {
             string flatpath = string.Join(pathSeparator, path, key);
 
             if (!flatData.ContainsKey(flatpath))
             {
-                flatData.Add(flatpath, value);
+                flatData.Add(flatpath, value.ToString());
                 AddToDict(path, key, value);
             }
         }
 
-        private void AddToDict(string path, string key, string value)
+        private void AddToDict(string path, string key, object value)
         {
             if (string.IsNullOrEmpty(path))
             {
-                // Handle empty or null path
+                Debug.LogError("Path is empty on " + key);
                 return;
             }
 
@@ -182,9 +183,19 @@ namespace SOM
             }
         }
 
-        private bool AddToNestedDict(Dictionary<string, object> nestedDict, string key, string value)
+        private bool AddToNestedDict(Dictionary<string, object> nestedDict, string key, object value)
         {
-            if (nestedDict == null || key == null) return false;
+            if (nestedDict == null)
+            {
+                Debug.LogError($"nestedDict is null - {key} : {value}");
+                return false;
+            }
+
+            if (key == null)
+            {
+                Debug.LogError($"key is null - {key} : {value}");
+                return false;
+            }
 
             if (!nestedDict.ContainsKey(key))
             {
@@ -193,10 +204,11 @@ namespace SOM
             }
             else
             {
+                Debug.Log($"nestedDict already contains key - {key} : {value}");
                 return false;
             }
         }
-        private bool UpdateNestedDict(Dictionary<string, object> nestedDict, string key, string value)
+        private bool UpdateNestedDict(Dictionary<string, object> nestedDict, string key, object value)
         {
             if (nestedDict == null || key == null) return false;
 

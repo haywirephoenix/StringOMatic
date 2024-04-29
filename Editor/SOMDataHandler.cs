@@ -1,18 +1,43 @@
 using System.Collections.Generic;
 using System;
 
+#if SOM_ADDRESSABLES
+using UnityEngine.ResourceManagement.ResourceLocations;
+#endif
+
 namespace SOM
 {
-
-    public class SOMDataHandler
+    [Serializable]
+    public class SOMDataHandler : SOMScriptableSingleton<SOMDataHandler>
     {
         public static int ModuleCount { get { return DataStore.RootCount(); } }
         private static SOMDictionary DataStore;
 
-        public SOMDictionary database = DataStore;
+        public enum ConstType { String, Int, Float }
+
+        public bool IResourcesNeedAssigning = false;
 
         private const string SentinelValue = "__SOMDBSENTINEL__";
 
+#if SOM_ADDRESSABLES
+
+        public List<string> resourceLocationAssetPaths;
+        public List<string> resourceLocationClassPaths;
+
+        // public Dictionary<string, IResourceLocation> foundIResourceLocs;
+
+        public void AddIResource(string resourceKeypath, string resourceClassPath)
+        {
+            resourceLocationAssetPaths.Add(resourceKeypath);
+            resourceLocationClassPaths.Add(resourceClassPath);
+        }
+        public void ClearIResourceData()
+        {
+            resourceLocationAssetPaths = new();
+            resourceLocationClassPaths = new();
+        }
+
+#endif
         public static void AddConstant(SOMPathData data)
         {
             ExceptionIfNullOrEmpty(DataStore, data.Path, data.ConstName, data.ConstValue);
@@ -23,7 +48,7 @@ namespace SOM
             DataStore.Add(nicePath, niceName, data.ConstValue);
         }
 
-        public static void AddConstant(string path, string constName, string constValue)
+        public static void AddConstant(string path, string constName, object constValue)
         {
             SOMPathData somPathData = new(path, constName, constValue);
             AddConstant(somPathData);
@@ -54,6 +79,7 @@ namespace SOM
         {
             return DataStore;
         }
+
         public static SortedList<string, string> GetAllConstants()
         {
             return DataStore.GetFlatData();
@@ -108,7 +134,7 @@ namespace SOM
             return DataStore != null;
         }
 
-        private static bool ExceptionIfNullOrEmpty(object database, string modulePath = SentinelValue, string constName = SentinelValue, string constValue = SentinelValue)
+        private static bool ExceptionIfNullOrEmpty(object database, string modulePath = SentinelValue, string constName = SentinelValue, object constValue = null)
         {
             if (database == null)
                 throw new DatabaseNotExistException();
@@ -119,7 +145,7 @@ namespace SOM
             if (constName != SentinelValue && String.IsNullOrEmpty(constName))
                 throw new ArgumentException("constName cannot be empty.", nameof(constName));
 
-            if (constValue != SentinelValue && String.IsNullOrEmpty(constValue))
+            if (constValue == null || constValue is string conststr && String.IsNullOrEmpty(conststr))
                 throw new ArgumentException("constValue cannot be empty.", nameof(constValue));
 
             return false;
