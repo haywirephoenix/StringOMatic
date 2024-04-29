@@ -21,18 +21,7 @@ namespace SOM
         [InitializeOnLoadMethod]
         static void CheckForRewired()
         {
-            string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-            if (Type.GetType("Rewired.ReInput, Rewired_Core") == null)
-            {
-                if (defines.Contains(defineSymbol))
-                    defines = defines.Remove(defines.IndexOf(defineSymbol), defineSymbol.Length);
-            }
-            else
-            {
-                if (!defines.Contains(defineSymbol))
-                    defines = defines + ";" + defineSymbol;
-            }
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, defines);
+            SOMUtils.CheckForDefineSymbol(defineSymbol, typeString);
         }
 
         //==================================
@@ -49,7 +38,8 @@ namespace SOM
         //==================================
         //Vars
         //==================================
-        static string defineSymbol = "SOM_REWIRED";
+        const string defineSymbol = "SOM_REWIRED";
+        const string typeString = "Rewired.ReInput, Rewired_Core";
 
         //==================================
         //Properties
