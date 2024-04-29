@@ -16,16 +16,17 @@ namespace SOM
 		//=========================================
 		//Consts
 		//=========================================
-		const string VERSION = "2.0.3";
+		const string VERSION = "2.0.4";
 		const string PREFERENCES_TAB = "String-O-Matic";
 		const string MENU_TAB = "Tools/StringOMatic";
-		public const string VERSION_LABEL = "<b>String-O-Matic</b> version ";
 
+		public const string CONTROL_ID = "SOMPreferences";
 		public const string CLASSNAME_KEY = "File Name";
 		public const string NAMESPACE_KEY = "Namespace";
 		public const string TARGET_DIRECTORY_KEY = "Target Directory";
 		public const string GENERATE_CS_KEY = "GenerateCS";
 		public const string WRITE_COMMENT_KEY = "WriteComment";
+		public const string VERSION_LABEL = "version ";
 
 		public const string DEFAULT_CLASS = "StringOMatic";
 		public const string DEFAULT_NAMESPACE = "StringOMatic";
@@ -34,7 +35,7 @@ namespace SOM
 		const string SOMTitle = "SOMTitle";
 		const string GENERATE_CS_FILE = "Generate CS file";
 		const string WRITE_COMMENT = "Write comment at top";
-		const string CONTROL_ID = "SOMPreferences";
+
 		const string REFRESH_ALL = "Refresh All";
 		const string FORUM_THREAD = "Forum Thread";
 		const string FORUM_URL = "http://forum.unity3d.com/threads/string-o-matic-say-goodbye-to-magic-strings.377123/";
@@ -344,15 +345,16 @@ namespace SOM
 			if (GUI.changed)
 				SOMPreferences.Save();
 
-			GUILayout.Space(15);
+			GUILayout.Space(25);
 			//Draw Footer
-			EditorGUI.DrawPreviewTexture(new Rect(scale.width / 2 - 180, GetLastRect().y, 360, 45), header);
-			GUILayout.Space(70);
+			EditorGUI.DrawPreviewTexture(new Rect(scale.width / 2 - 180, GetLastRect().y - 20, 360, 45), header);
+			GUILayout.Space(10);
 			//Draw Version
-			GUILayout.Space(-15);
+			// GUILayout.Space(-10);
 			TextAnchor oldAllignment = EditorStyles.miniLabel.alignment;
-			EditorStyles.miniLabel.alignment = TextAnchor.MiddleRight;
+			EditorStyles.miniLabel.alignment = TextAnchor.MiddleCenter;
 			EditorStyles.miniLabel.richText = true;
+			EditorStyles.miniLabel.contentOffset = new Vector2(50, 0);
 			EditorGUILayout.LabelField(VERSION_LABEL + VERSION, EditorStyles.miniLabel);
 			EditorStyles.miniLabel.richText = false;
 			EditorStyles.miniLabel.alignment = oldAllignment;
@@ -360,10 +362,10 @@ namespace SOM
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button(FORUM_THREAD, EditorStyles.miniButton))
 				Application.OpenURL(FORUM_URL);
-			if (GUILayout.Button(ASSET_STORE_PAGE, EditorStyles.miniButton))
-				Application.OpenURL(ASSET_STORE_URL);
 			if (GUILayout.Button(GITHUB_REPO, EditorStyles.miniButton))
 				Application.OpenURL(GITHUB_REPO_URL);
+			if (GUILayout.Button(ASSET_STORE_PAGE, EditorStyles.miniButton))
+				Application.OpenURL(ASSET_STORE_URL);
 			GUILayout.EndHorizontal();
 			GUILayout.EndVertical();
 		}
