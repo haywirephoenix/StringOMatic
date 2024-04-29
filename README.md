@@ -105,17 +105,23 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 <summary><b>Usage</b></summary>
 <br/>
 
-Once you've generated your constants, in your project you will have access to all the module namespaces such as:
+Once you've generated your constants, in your project you will have access to all the module classes.
+
+If you used the "Wrap modules in namespaces" option:
 ```csharp 
-using StringOMatic.MecanimModule;
+using StringOMatic.InputModule;
 ```
-Or you can create a shortcut to a specific class, for example:
+Then you can access them like this:
 ```csharp 
-using SwordShieldParams = StringOMatic.MecanimModule.Mecanim.Controllers.SwordShield.Parameters;
+Input.GetAxis(InputStatics.horizontal)
+```
+Or you can create a shortcut to a specific class:
+```csharp 
+using MyControllerParams = StringOMatic.MecanimModule.MecanimStatics.Controllers.MyController.Parameters;
 ```
 Then you can reference them like this:
 ```csharp 
-animator.SetFloat(SwordShieldParams.horizontalFullPathHash,x);
+animator.SetFloat(MyControllerParams.horizontalFullPathHash,x);6
 ```
 
 <br/>
@@ -125,12 +131,47 @@ animator.SetFloat(SwordShieldParams.horizontalFullPathHash,x);
 <summary><b>Addressables</b></summary>
 <br/>
 
-If you have the Unity Addressables package installed, the Addressables module should now be included in the preferences window. When enabled, it will generate constant strings from you Addressables: 
+If you have the Unity Addressables package installed, the Addressables module should now be included in the preferences window. When enabled, it will generate constant strings from your Addressables: 
 
 MainAsset - AddressableAssetEntry.AssetPath, AddressableAssetGroup.Guid
 SubAssets - AddressableAssetEntry.address
 
 The MainAsset GUID is stored as a string, the same as Unity stores it.
+
+<br/>
+</details>
+
+<details>
+<summary><b>Addressables Usage</b></summary>
+<br/>
+
+Loading all the animation clips in a bundled fbx:
+
+```csharp
+var handle = Addressables.LoadAssetAsync<AnimationClip[]>(AddressablesStatics.MyAnimations.mainAssetPath);
+
+await handle.Task;
+
+if (handle.Status == AsyncOperationStatus.Succeeded)
+{
+    AnimationClip[] myFBXAnims = handle.Result;
+
+}
+```
+
+Loading a SubAsset (for example an animationclip in a bundled fbx):
+
+```csharp 
+var handle = Addressables.LoadAssetAsync<AnimationClip>(AddressablesStatics.MyAnimations.SubAssets.myanimationClip);
+
+await handle.Task;
+
+if (handle.Status == AsyncOperationStatus.Succeeded)
+{
+
+    AnimationClip myanimationClip = handle.Result;   
+}
+```
 
 <br/>
 </details>

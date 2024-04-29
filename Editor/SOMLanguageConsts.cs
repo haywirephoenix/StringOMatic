@@ -8,6 +8,7 @@ namespace SOM
         public const string _public = "public";
         public const string _namespace = "namespace";
         public const string _static = "static";
+        public const string _Statics = "Statics";
         public const string _const = "const";
         public const string _class = "class";
         public const string _struct = "struct";

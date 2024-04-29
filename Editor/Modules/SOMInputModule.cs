@@ -13,7 +13,7 @@ namespace SOM
 		//===================================
 		public override string moduleName
 		{
-			get { return "InputConsts"; }
+			get { return "Input"; }
 		}
 
 		//===================================

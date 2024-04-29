@@ -26,6 +26,7 @@ namespace SOM
 		public const string TARGET_DIRECTORY_KEY = "Target Directory";
 		public const string GENERATE_CS_KEY = "GenerateCS";
 		public const string WRITE_COMMENT_KEY = "WriteComment";
+		public const string WRAP_NAMESPACES_KEY = "WrapNamespaces";
 		public const string VERSION_LABEL = "version ";
 
 		public const string DEFAULT_CLASS = "StringOMatic";
@@ -35,6 +36,7 @@ namespace SOM
 		const string SOMTitle = "SOMTitle";
 		const string GENERATE_CS_FILE = "Generate CS file";
 		const string WRITE_COMMENT = "Write comment at top";
+		const string WRAP_NAMESPACES = "Wrap modules in namespaces";
 
 		const string REFRESH_ALL = "Refresh All";
 		const string FORUM_THREAD = "Forum Thread";
@@ -55,6 +57,7 @@ namespace SOM
 		static bool classEnabled;
 		static bool namespaceEnabled;
 		static bool targetDirEnabled;
+		static bool wrapModuleNamepsacesEnabled;
 		static bool writeCommentEnabled;
 		static string classNameText;
 		static string namespaceText;
@@ -275,6 +278,7 @@ namespace SOM
 			GUILayout.Space(20);
 			// generateCS.DrawToggleField(GENERATE_CS_FILE, GENERATE_CS_KEY, true);
 			DrawToggleField(ref writeCommentEnabled, WRITE_COMMENT, WRITE_COMMENT_KEY, true);
+			DrawToggleField(ref wrapModuleNamepsacesEnabled, WRAP_NAMESPACES, WRAP_NAMESPACES_KEY, false);
 			// generateXML.DrawToggleField("Generate XML file", "GenerateXML", false);
 			GUILayout.Space(20);
 

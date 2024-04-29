@@ -40,7 +40,7 @@ namespace SOM
 		private static string NamespaceName { get; set; }
 		private static int RemainingOpenBraceCount { get; set; }
 		private static int IndentationLevel { get; set; }
-		private static bool AddAnimatorInts { get; set; }
+		private static bool WrapModuleNamespaces { get; set; }
 		private static StringBuilder _StringBuilder { get; set; }
 		private static Dictionary<string, object> FoundModules { get; set; }
 
@@ -68,7 +68,7 @@ namespace SOM
 			IndentationLevel = 0;
 			RemainingOpenBraceCount = 0;
 
-			AddAnimatorInts = SOMPreferences.GetBoolFromPrefs(SOMMecanimModule.ADD_ANIM_HASH_KEY, true);
+			WrapModuleNamespaces = SOMPreferences.GetBoolFromPrefs(SOMManager.WRAP_NAMESPACES_KEY, false);
 
 #if SOM_ADDRESSABLES
 
@@ -395,7 +395,6 @@ namespace SOM
 			bool reachedConsts = false;
 
 			bool isRoot = indentLevel == 1;
-			bool isFirst = indentLevel == 2;
 
 			foreach (var kvp in dict)
 			{
@@ -407,8 +406,11 @@ namespace SOM
 
 						if (isRoot)
 						{
-							result.WriteNamespace(SOMUtils.NicifyModuleName(kvp.Key + "Module"), indentLevel);
-							indentLevel++;
+							if (WrapModuleNamespaces)
+							{
+								result.WriteNamespace(SOMUtils.NicifyModuleName(kvp.Key + "Module"), indentLevel);
+								indentLevel++;
+							}
 
 							CurrentModuleName = kvp.Key;
 
@@ -426,8 +428,9 @@ namespace SOM
 						// var nectDict = kvp.Value as Dictionary<string, object>;
 						// stringsNext = nectDict.First().Value is string;
 
+						string staticsStr = isRoot ? _Statics : "";
 
-						result.WriteClass(kvp.Key, indentLevel);
+						result.WriteClass(kvp.Key + staticsStr, indentLevel);
 
 
 						result.Append(GetAllConsts(nestedDict, indentLevel + 1, visited));
@@ -437,7 +440,7 @@ namespace SOM
 
 
 
-						if (isRoot)
+						if (isRoot && WrapModuleNamespaces)
 						{
 							indentLevel--;
 							result.WriteIndentations(indentLevel);
