@@ -9,31 +9,46 @@ namespace SOM
     {
 
         public static string Name { get { return typeof(T).Name; } }
+        private static readonly object lockObject = new object();
         private static T singleton;
         public static T Singleton
         {
             get
             {
-                //Get an existing file or create a new one
-                if (singleton == null)
+                lock (lockObject)
                 {
-                    string[] guids = AssetDatabase.FindAssets(Name + " t:" + typeof(T).Name);
-                    if (guids.Length == 0)
+                    if (singleton == null)
                     {
-                        singleton = ScriptableObject.CreateInstance<T>();
-                        guids = AssetDatabase.FindAssets(typeof(T).Name);
-                        if (guids.Length == 0)
-                            throw new FileNotFoundException("File could not be found");
-                        string targetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
-                        targetPath = targetPath.Substring(0, targetPath.LastIndexOf("/"));
-                        AssetDatabase.CreateAsset(singleton, targetPath + "/" + Name + ".asset");
-                        AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(singleton));
+                        string assetPath = GetOrCreateAssetPath();
+                        singleton = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+
                     }
-                    else
-                        singleton = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(guids[0]), typeof(T)) as T;
+                    return singleton;
                 }
-                return singleton;
             }
+        }
+
+        private static string GetOrCreateAssetPath()
+        {
+            string[] guids = AssetDatabase.FindAssets(Name + " t:" + typeof(T).Name);
+            string assetPath;
+            if (guids.Length == 0)
+            {
+                singleton = ScriptableObject.CreateInstance<T>();
+                guids = AssetDatabase.FindAssets(typeof(T).Name);
+                if (guids.Length == 0)
+                    throw new FileNotFoundException("File could not be found");
+                string targetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
+                targetPath = targetPath.Substring(0, targetPath.LastIndexOf("/"));
+                assetPath = targetPath + "/" + Name + ".asset";
+                AssetDatabase.CreateAsset(singleton, assetPath);
+                AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(singleton));
+            }
+            else
+            {
+                assetPath = AssetDatabase.GUIDToAssetPath(guids[0]);
+            }
+            return assetPath;
         }
 
     }

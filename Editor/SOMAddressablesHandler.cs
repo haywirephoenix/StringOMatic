@@ -101,35 +101,15 @@ namespace SOM
 
                     GetIResourceAssignToClassPath(assetPath, classPathPlused, constName);
 
-                    // if (AssignObjectToPath(classPath, constName, classPath))
-                    // {
-                    // 	Debug.Log("assigned " + classPath + " " + constName + " " + classPath);
-                    // }
                 }
                 else
                 {
-                    // Log a warning or handle the case where no dot was found
                     Debug.LogError($"Invalid path format: {assetPath}");
                 }
             }
 
         }
 
-        // public static bool AssignObjectToPath(string classPath, string fieldName, object obj)
-        // {
-
-        // 	Type classType = Type.GetType(classPath);
-
-        // 	if (classType == null) return false;
-
-        // 	FieldInfo fieldInfo = classType.GetField(fieldName);
-
-        // 	if (fieldInfo == null) return false;
-
-        // 	fieldInfo.SetValue(null, obj as IResourceLocation);
-
-        // 	return true;
-        // }
 
         public const string AssemblyCSharp = "Assembly-CSharp";
 
@@ -180,8 +160,6 @@ namespace SOM
                 foreach (IResourceLocation location in locations)
                 {
                     fieldInfo.SetValue(null, location);
-                    // Handle the found resource location
-                    // Debug.Log("Resource location found by PrimaryKey: " + location.InternalId);
                 }
             }
             else
