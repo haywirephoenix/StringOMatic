@@ -10,12 +10,18 @@ using Microsoft.CSharp;
 using System.CodeDom.Compiler;
 using System.Linq;
 
-using UnityEngine.ResourceManagement.ResourceLocations;
+using static SOM.LanguageConsts;
+
 using System.Reflection;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.AddressableAssets;
 
-using static SOM.LanguageConsts;
+using UnityEditor.AddressableAssets;
+using UnityEditor.AddressableAssets.Settings.GroupSchemas;
+using UnityEditor.AddressableAssets.Settings;
+using UnityEngine.AddressableAssets.ResourceLocators;
+
 
 
 namespace SOM
@@ -25,6 +31,7 @@ namespace SOM
 
 
         public const string AddressablesModule = "AddressablesModule";
+        public const string ClassName = "Addressables";
 
         public static void ValidateAndStoreResLoc(StringBuilder pathBuilder, string NamespaceName, string constName, object constValue)
         {
@@ -45,8 +52,7 @@ namespace SOM
 
         }
 
-
-
+        private static IResourceLocator locator;
 
         // [UnityEditor.Callbacks.DidReloadScripts]
         public static void OnLoad()
@@ -113,7 +119,6 @@ namespace SOM
 
         }
 
-
         public const string AssemblyCSharp = "Assembly-CSharp";
 
         public static Type GetType(string typeName)
@@ -172,8 +177,110 @@ namespace SOM
         }
 
 
+        #region module methods
+
+        public static bool addressablesReady = false;
+
+        public static void InitalizeAddressables()
+        {
+            addressablesReady = false;
+
+            Addressables.InitializeAsync().Completed += OnInitializeComplete;
+        }
+
+        static void OnInitializeComplete(AsyncOperationHandle<IResourceLocator> handle)
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                locator = handle.Result;
+
+                addressablesReady = true;
+            }
+        }
+
+
+        public static void GenerateAddressableConstants()
+        {
+            AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
+
+            if (settings == null)
+            {
+                return;
+            }
+
+            List<AddressableAssetGroup> groups = settings.groups;
+            Dictionary<System.Guid, IList<IResourceLocation>> locationsDict = SOMAddressablesUtility.MakeLocationsListDict(locator);
+
+            foreach (var group in groups)
+            {
+                string groupName = group.Name;
+
+                ProcessAssetGroup(group, groupName, locationsDict);
+            }
+        }
+
+        private static void ProcessAssetGroup(AddressableAssetGroup group, string groupName, Dictionary<System.Guid, IList<IResourceLocation>> locationsDict)
+        {
+            List<AddressableAssetEntry> results = new List<AddressableAssetEntry>();
+            group.GatherAllAssets(results, true, true, true);
+
+            foreach (var asset in results)
+            {
+                if (!asset.IsSubAsset)
+                {
+                    ProcessMainAsset(asset, groupName, locationsDict);
+                }
+                else
+                {
+                    ProcessSubAsset(asset, groupName);
+                }
+            }
+        }
+
+        private static void ProcessMainAsset(AddressableAssetEntry asset, string groupName, Dictionary<System.Guid, IList<IResourceLocation>> locationsDict)
+        {
+            string assetPath = asset.AssetPath;
+            string guidString = asset.parentGroup.Guid;
+
+            if (!Guid.TryParse(guidString, out System.Guid guid))
+            {
+                Debug.Log($"Invalid GUID format for asset: {asset.AssetPath}");
+                return;
+            }
+
+            string constPath = $"{ClassName}.{groupName}";
+
+            SOMDataHandler.AddConstant(constPath, "GUID", guidString);
+            SOMDataHandler.AddConstant(constPath, "MainAssetPath", assetPath);
+
+
+            var assetGUID = Guid.Parse(asset.guid);
+            var foundResourceLoc = SOMAddressablesUtility.FindResourceDict(assetGUID, locationsDict, asset.address);
+
+            if (foundResourceLoc != null)
+            {
+                SOMDataHandler.AddConstant(constPath, "iResourceLocation", foundResourceLoc);
+            }
+        }
+
+        private static void ProcessSubAsset(AddressableAssetEntry asset, string groupName)
+        {
+            string parentAssetPath = asset.AssetPath;
+            UnityEngine.Object subAsset = asset.TargetAsset;
+            string subAssetName = subAsset.name;
+            string subAssetType = asset.TargetAsset.GetType().Name;
+
+            string constPath = $"{ClassName}.{groupName}.SubAssets";
+            string constName = $"{subAssetName}{subAssetType}";
+            string constValue = asset.address;
+
+            SOMDataHandler.AddConstant(constPath, constName, constValue);
+        }
+
 
     }
+
+    #endregion
 }
 
 
