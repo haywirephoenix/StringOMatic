@@ -86,6 +86,8 @@ namespace SOM
 				{
 					InitalizeAddressables();
 				}
+				SOMScriptableSingleton<SOMPreferences> singleton = SOMPreferences.Singleton;
+
 				return SOMPreferences.bools[needsRefreshingKey];
 			}
 			set
@@ -94,9 +96,15 @@ namespace SOM
 				{
 					InitalizeAddressables();
 				}
+				SOMScriptableSingleton<SOMPreferences> singleton = SOMPreferences.Singleton;
+
 				SOMPreferences.bools[needsRefreshingKey] = value;
 			}
 		}
+
+		#endregion
+
+		#region module vars
 
 		SOMFilters.FilterList _list; //todo: redo filter
 
@@ -126,13 +134,12 @@ namespace SOM
 		public override void Refresh()
 		{
 
-			// InitalizeAddressables();
 			GenerateAddressableConstants(locator);
 		}
 
 		#endregion
 
-		#region addressable properties
+		#region addressable vars
 
 		private static IResourceLocator locator;
 
@@ -154,7 +161,6 @@ namespace SOM
 		{
 			if (handle.Status == AsyncOperationStatus.Succeeded)
 			{
-				// Debug.Log("Addressables initialization succeeded");
 				locator = handle.Result;
 
 				addressablesReady = true;
@@ -222,8 +228,7 @@ namespace SOM
 
 			if (foundResourceLoc != null)
 			{
-				// Debug.Log("added " + foundResourceLoc);
-				// SOMDataHandler.AddConstant(constPath, "iResourceLocation", foundResourceLoc);
+				SOMDataHandler.AddConstant(constPath, "iResourceLocation", foundResourceLoc);
 			}
 		}
 

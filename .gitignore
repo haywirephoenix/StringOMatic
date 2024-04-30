@@ -87,3 +87,5 @@ TPCControllerWithErrors.txt.meta
 TPCController.cs
 TPCController.cs.meta
 Editor/SOMPreferences.asset
+SOMPreferences.asset
+SOMPreferences.asset.meta

@@ -107,7 +107,10 @@ namespace SOM
 		public static Dictionary<System.Guid, IList<IResourceLocation>> MakeLocationsListDict(IResourceLocator locator)
 		{
 
+
 			Dictionary<System.Guid, IList<IResourceLocation>> locationsDict = new();
+
+			if (locator == null) return locationsDict;
 
 			foreach (object locatorKey in locator.Keys)
 			{

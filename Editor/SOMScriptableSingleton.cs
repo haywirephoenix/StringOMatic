@@ -9,22 +9,19 @@ namespace SOM
     {
 
         public static string Name { get { return typeof(T).Name; } }
-        private static readonly object lockObject = new object();
+        private const string AssetPath = "Assets/StringOMatic/";
         private static T singleton;
         public static T Singleton
         {
             get
             {
-                lock (lockObject)
+                if (singleton == null)
                 {
-                    if (singleton == null)
-                    {
-                        string assetPath = GetOrCreateAssetPath();
-                        singleton = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+                    string assetPath = GetOrCreateAssetPath();
+                    singleton = AssetDatabase.LoadAssetAtPath<T>(assetPath);
 
-                    }
-                    return singleton;
                 }
+                return singleton;
             }
         }
 
@@ -38,7 +35,7 @@ namespace SOM
                 guids = AssetDatabase.FindAssets(typeof(T).Name);
                 if (guids.Length == 0)
                     throw new FileNotFoundException("File could not be found");
-                string targetPath = "Assets/StringOMatic/";
+                string targetPath = AssetPath;
                 targetPath = targetPath.Substring(0, targetPath.LastIndexOf("/"));
                 assetPath = targetPath + "/" + Name + ".asset";
                 AssetDatabase.CreateAsset(singleton, assetPath);

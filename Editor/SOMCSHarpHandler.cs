@@ -70,11 +70,11 @@ namespace SOM
 
 			WrapModuleNamespaces = SOMPreferences.GetBoolFromPrefs(SOMManager.WRAP_NAMESPACES_KEY, false);
 
-#if SOM_ADDRESSABLES
+			// #if SOM_ADDRESSABLES
 
-			SOMDataHandler.Singleton.ClearIResourceData();
+			// 			SOMDataHandler.Singleton.ClearIResourceData();
 
-#endif
+			// #endif
 
 
 		}
@@ -237,14 +237,12 @@ namespace SOM
 		private static string TypeToString(object obj)
 		{
 			Type type = obj.GetType();
-			// Check if the type has a mapping in the dictionary
 			if (validTypes.ContainsKey(type))
 			{
 				return validTypes[type];
 			}
 			else
 			{
-				// Return the type name as is
 				return "object";
 			}
 		}
@@ -254,19 +252,18 @@ namespace SOM
 		{
 			if (type.IsClass || type.IsInterface || type == typeof(Guid))
 			{
-				return true; // Classes and interfaces can have static members
+				return true;
 			}
 			else if (type.IsEnum || type.IsValueType)
 			{
 				return false;
 			}
-			else if (typeof(Delegate).IsAssignableFrom(type)) // Delegates cannot be static
+			else if (typeof(Delegate).IsAssignableFrom(type))
 			{
 				return false;
 			}
 			else
 			{
-				// Unknown type, assuming it can't be static
 				return false;
 			}
 		}
@@ -275,7 +272,7 @@ namespace SOM
 		{
 			if ((type.IsEnum || IsPrimitiveType(type)) && type != typeof(Guid))
 			{
-				return true; // Enums and primitive types can be used for const variables
+				return true;
 			}
 			else
 			{
@@ -301,10 +298,6 @@ namespace SOM
 				float => constValue + "f",
 				Guid => $"\"{constValue}\"",
 				int => constValue,
-				// Guid => $"new Guid(\"{constValue}\")",
-				// #if SOM_ADDRESSABLES
-				// 				ResourceLocationBase => "",
-				// #endif
 				_ => constValue,
 			};
 		}
@@ -314,9 +307,9 @@ namespace SOM
 		private static string GetConstString(string constName, object constValue)
 		{
 
-#if SOM_ADDRESSABLES
-			SOMAddressablesHandler.ValidateAndStoreResLoc(pathBuilder, NamespaceName, constName, constValue);
-#endif
+			// #if SOM_ADDRESSABLES
+			// SOMAddressablesHandler.ValidateAndStoreResLoc(pathBuilder, NamespaceName, constName, constValue);
+			// #endif
 
 			Type objType = constValue.GetType();
 
@@ -419,25 +412,17 @@ namespace SOM
 
 						pathBuilder.Append(kvp.Key + _dotChar);
 
-						// result.CheckForMecanimLayer(kvp.Value as string);
-
 						visited.Add(nestedDict);
-						// reachedStrings = nestedDict.Values.Any(val => val is string);
-						reachedConsts = nestedDict.Values.Any(val => val is not Dictionary<string, object>);
 
-						// var nectDict = kvp.Value as Dictionary<string, object>;
-						// stringsNext = nectDict.First().Value is string;
+						reachedConsts = nestedDict.Values.Any(val => val is not Dictionary<string, object>);
 
 						string staticsStr = isRoot ? _Statics : "";
 
 						result.WriteClass(kvp.Key + staticsStr, indentLevel);
 
-
 						result.Append(GetAllConsts(nestedDict, indentLevel + 1, visited));
 
-
 						result.WriteEndClass(indentLevel);
-
 
 
 						if (isRoot && WrapModuleNamespaces)
@@ -455,12 +440,7 @@ namespace SOM
 				}
 				else // Reached strings
 				{
-					// result.WriteConstant(kvp.Key, kvp.Value as string, indentLevel);
 					result.WriteConstant(kvp.Key, kvp.Value, indentLevel);
-
-					// result.CheckAddMecanimConst(kvp.Key, kvp.Value as string, indentLevel);
-
-
 				}
 			}
 
@@ -577,33 +557,6 @@ namespace SOM
 		static void ResetIndentationLevel()
 		{
 			IndentationLevel = 0;
-		}
-		public static string GetMecanimLayername(string[] parts)
-		{
-			string layerName = "";
-			int layersIndex = Array.IndexOf(parts, SOMMecanimModule.layers);
-
-			if (layersIndex != -1 && layersIndex < parts.Length - 1)
-			{
-				StringBuilder layerNameBuilder = new();
-
-				for (int h = layersIndex + 1; h < parts.Length; h++)
-				{
-					if (parts[h] == SOMMecanimModule.StateMachines || parts[h] == SOMMecanimModule.states)
-					{
-						continue;
-					}
-
-					layerNameBuilder.Append(parts[h]);
-					if (h < parts.Length - 1)
-					{
-						layerNameBuilder.Append(_dotStr);
-					}
-				}
-				layerName = layerNameBuilder.ToString();
-			}
-
-			return layerName;
 		}
 
 	}

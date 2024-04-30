@@ -48,14 +48,17 @@ namespace SOM
 
 
 
-        [UnityEditor.Callbacks.DidReloadScripts]
+        // [UnityEditor.Callbacks.DidReloadScripts]
         public static void OnLoad()
         {
-            if (SOMDataHandler.Singleton.IResourcesNeedAssigning)
-            {
-                // SOMDataHandler.Singleton.IResourcesNeedAssigning = false;
-                AssignIResources();
-            }
+
+            // SOMDataHandler singleton = SOMScriptableSingleton<SOMDataHandler>.Singleton;
+
+            // if (SOMDataHandler.Singleton.IResourcesNeedAssigning)
+            // {
+            //     // SOMDataHandler.Singleton.IResourcesNeedAssigning = false;
+            //     AssignIResources();
+            // }
 
         }
 
