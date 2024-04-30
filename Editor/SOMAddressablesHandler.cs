@@ -181,6 +181,7 @@ namespace SOM
         #region module methods
 
         public static bool addressablesReady = false;
+        public static bool waitingForSettings = false;
 
         public static void InitalizeAddressables()
         {
@@ -192,9 +193,11 @@ namespace SOM
 
             if (noSettingsPath || NoAddressablesDefault)
             {
-                Debug.Log("Addressables settings not found. Please create Addressables settings in your project.");
+                waitingForSettings = true;
                 return;
             }
+
+            waitingForSettings = false;
 
             Addressables.InitializeAsync().Completed += OnInitializeComplete;
         }
