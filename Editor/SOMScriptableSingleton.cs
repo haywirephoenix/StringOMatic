@@ -19,7 +19,6 @@ namespace SOM
                 {
                     string assetPath = GetOrCreateAssetPath();
                     singleton = AssetDatabase.LoadAssetAtPath<T>(assetPath);
-
                 }
                 return singleton;
             }
@@ -35,11 +34,16 @@ namespace SOM
                 guids = AssetDatabase.FindAssets(typeof(T).Name);
                 if (guids.Length == 0)
                     throw new FileNotFoundException("File could not be found");
-                string targetPath = AssetPath;
-                targetPath = targetPath.Substring(0, targetPath.LastIndexOf("/"));
-                assetPath = targetPath + "/" + Name + ".asset";
+
+                string targetDirectory = AssetPath.Substring(0, AssetPath.LastIndexOf("/"));
+                if (!Directory.Exists(targetDirectory))
+                {
+                    Directory.CreateDirectory(targetDirectory);
+                }
+
+                assetPath = AssetPath + Name + ".asset";
                 AssetDatabase.CreateAsset(singleton, assetPath);
-                AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(singleton));
+                AssetDatabase.ImportAsset(assetPath);
             }
             else
             {
@@ -47,6 +51,5 @@ namespace SOM
             }
             return assetPath;
         }
-
     }
 }
