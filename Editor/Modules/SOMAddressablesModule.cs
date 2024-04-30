@@ -274,7 +274,7 @@ namespace SOM
 
 		static List<SOMAddressablesUtility.AddressableListItem> addressableListItems;
 
-		private Vector2 scrollPos;
+		// private Vector2 scrollPos = new();
 		private int selected = -1;
 		private Vector2 scrollPosition;
 		private bool unfoldAssets = true;
@@ -316,7 +316,7 @@ namespace SOM
 			init = true;
 
 			addressableListItems = new();
-			scrollPos = new();
+			// scrollPos = new();
 
 			var groups = SOMAddressablesUtility.GetAddressableGroups();
 
@@ -532,29 +532,29 @@ namespace SOM
 
 
 
-			return;
+			// return;
 
-			EditorGUILayout.LabelField("Group Name:", GUILayout.Width(80));
-			// listItem.GroupName = EditorGUILayout.TextField(listItem.GroupName);
+			// EditorGUILayout.LabelField("Group Name:", GUILayout.Width(80));
+			// // listItem.GroupName = EditorGUILayout.TextField(listItem.GroupName);
 
 
-			EditorGUILayout.Space();
+			// EditorGUILayout.Space();
 
-			EditorGUILayout.LabelField("Directories:");
-			foreach (var directory in listItem.Directories)
-			{
-				EditorGUILayout.LabelField(directory);
-			}
+			// EditorGUILayout.LabelField("Directories:");
+			// foreach (var directory in listItem.Directories)
+			// {
+			// 	EditorGUILayout.LabelField(directory);
+			// }
 
-			EditorGUILayout.Space();
+			// EditorGUILayout.Space();
 
-			EditorGUILayout.LabelField("Files:");
-			foreach (var file in listItem.Files)
-			{
-				EditorGUILayout.LabelField(file);
-			}
+			// EditorGUILayout.LabelField("Files:");
+			// foreach (var file in listItem.Files)
+			// {
+			// 	EditorGUILayout.LabelField(file);
+			// }
 
-			EditorGUILayout.Space();
+			// EditorGUILayout.Space();
 
 
 

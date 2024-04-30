@@ -73,6 +73,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 StringOMatic.cs
+StringOMatic.meta
 StringOMaticWithErrors.txt
 LICENSE
 LICENSE.meta
@@ -89,3 +90,4 @@ TPCController.cs.meta
 Editor/SOMPreferences.asset
 SOMPreferences.asset
 SOMPreferences.asset.meta
+StringOMatic.cs.meta

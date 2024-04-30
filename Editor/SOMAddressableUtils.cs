@@ -139,7 +139,7 @@ namespace SOM
 
 			if (locationsDict == null)
 			{
-				Debug.LogWarning($"locationsDict is null");
+				// Debug.LogWarning($"locationsDict is null");
 				return null;
 			}
 
@@ -158,7 +158,7 @@ namespace SOM
 
 			if (foundList == null)
 			{
-				Debug.LogWarning($"foundList is null");
+				// Debug.LogWarning($"foundList is null");
 				return null;
 			}
 
@@ -229,7 +229,7 @@ namespace SOM
 				// Check if the asset is already in the group
 				if (group.entries.Any(entry => entry.guid == guid))
 				{
-					Debug.LogWarning($"Asset '{obj.name}' is already in group '{groupName}'.");
+					// Debug.LogWarning($"Asset '{obj.name}' is already in group '{groupName}'.");
 					return;
 				}
 
@@ -342,7 +342,7 @@ namespace SOM
 				}
 				else
 				{
-					Debug.LogWarning($"Addressable group '{GroupName}' not found.");
+					// Debug.LogWarning($"Addressable group '{GroupName}' not found.");
 				}
 			}
 		}

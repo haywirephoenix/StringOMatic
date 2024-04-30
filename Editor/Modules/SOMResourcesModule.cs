@@ -119,7 +119,7 @@ namespace SOM
 
 				string niceDirName = ClassName + _dotChar + string.Join(_dotChar, dirStrSplit.Select(SOMUtils.NicifyConstantName));
 
-				string moduleRootKey = ClassName;
+				// string moduleRootKey = ClassName;
 				string submodulePath = niceDirName;
 
 
@@ -132,31 +132,31 @@ namespace SOM
 
 				}
 
-				continue;
+				// continue;
 
-				//Foreach object in the folder
-				for (int i = 0; i < resource.Value.Count; i++)
-				{
+				// //Foreach object in the folder
+				// for (int i = 0; i < resource.Value.Count; i++)
+				// {
 
-					//Check if this object's path is in the filter //todo: redo filter
-					// if (list.hasFilter)
-					// {
-					// 	bool isFiltered = false;
-					// 	for (int j = 0; j < list.values.Length; j++)
-					// 	{
-					// 		if (resource.Value[i].Trim().Equals(list.values[j].Trim(), StringComparison.InvariantCultureIgnoreCase))
-					// 		{
-					// 			isFiltered = true;
-					// 			break;
-					// 		}
-					// 	}
-					// 	//And act accordingly...
-					// 	if (!(isFiltered ^ list.isBlack))
-					// 		continue;
-					// }
+				// 	//Check if this object's path is in the filter //todo: redo filter
+				// 	// if (list.hasFilter)
+				// 	// {
+				// 	// 	bool isFiltered = false;
+				// 	// 	for (int j = 0; j < list.values.Length; j++)
+				// 	// 	{
+				// 	// 		if (resource.Value[i].Trim().Equals(list.values[j].Trim(), StringComparison.InvariantCultureIgnoreCase))
+				// 	// 		{
+				// 	// 			isFiltered = true;
+				// 	// 			break;
+				// 	// 		}
+				// 	// 	}
+				// 	// 	//And act accordingly...
+				// 	// 	if (!(isFiltered ^ list.isBlack))
+				// 	// 		continue;
+				// 	// }
 
 
-				}
+				// }
 
 			}
 
