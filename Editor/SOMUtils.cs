@@ -303,21 +303,45 @@ namespace SOM
 			return (Event)method.Invoke(null, new object[] { e, options });
 		}
 
-		public static void CheckForDefineSymbol(string defineSymbol, string typeString)
+		public static bool CheckForDefineSymbol(string defineSymbol, string assemblyString, string typeString)
 		{
+			bool exists = false;
 			string defines = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
-			if (Type.GetType(typeString) == null)
+
+			try
+			{
+				Assembly assembly = Assembly.Load(assemblyString);
+
+				if (assembly != null)
+				{
+					Type type = assembly.GetType(typeString);
+
+					if (type != null)
+					{
+						exists = true;
+
+						if (!defines.Contains(defineSymbol))
+							defines += ";" + defineSymbol;
+					}
+				}
+			}
+			catch (System.Exception ex)
+			{
+
+				// Debug.LogError("Exception while checking for define symbol: " + defineSymbol + "\n" + ex.Message);
+			}
+
+			if (!exists)
 			{
 				if (defines.Contains(defineSymbol))
-					defines = defines.Remove(defines.IndexOf(defineSymbol), defineSymbol.Length);
+					defines = defines.Replace(defineSymbol + ";", "");
 			}
-			else
-			{
-				if (!defines.Contains(defineSymbol))
-					defines = defines + ";" + defineSymbol;
-			}
+
 			PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup, defines);
+
+			return exists;
 		}
+
 	}
 
 }

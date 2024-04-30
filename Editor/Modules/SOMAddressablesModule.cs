@@ -1,11 +1,5 @@
 ﻿
-
-using System.Collections.Generic;
-using System.IO;
-using System;
-using UnityEngine;
 using UnityEditor;
-using System.Linq;
 
 
 namespace SOM
@@ -14,8 +8,10 @@ namespace SOM
 	public class SOMAddressableCheck
 	{
 
-		public const string addressablesTypeString = "UnityEditor.AddressableAssets.Settings.AddressableAssetGroup, Unity.Addressables.Editor";
-		public const string addressablesDefineSymbol = "SOM_ADDRESSABLES";
+		public const string assembly = "Unity.Addressables";
+		public const string type = "UnityEngine.AddressableAssets.Addressables";
+		public const string defineSymbol = "SOM_ADDRESSABLES";
+
 
 		//==================================
 		//Initialization
@@ -23,9 +19,11 @@ namespace SOM
 		[InitializeOnLoadMethod]
 		public static void CheckForAddressables()
 		{
-			SOMUtils.CheckForDefineSymbol(addressablesDefineSymbol, addressablesTypeString);
+
+			SOMUtils.CheckForDefineSymbol(defineSymbol, assembly, type);
 
 		}
+
 
 	}
 

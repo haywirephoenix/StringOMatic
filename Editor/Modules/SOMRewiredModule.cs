@@ -13,11 +13,11 @@ using InputManager = Rewired.InputManager;
 
 namespace SOM
 {
-
     public class SOMRewiredCheck
     {
         const string defineSymbol = "SOM_REWIRED";
-        const string typeString = "Rewired.ReInput, Rewired_Core";
+        const string type = "Rewired.ReInput";
+        const string assembly = "Rewired_Core";
 
         //==================================
         //Initialization
@@ -25,9 +25,10 @@ namespace SOM
         [InitializeOnLoadMethod]
         public static void CheckForRewired()
         {
-            SOMUtils.CheckForDefineSymbol(defineSymbol, typeString);
 
+            SOMUtils.CheckForDefineSymbol(defineSymbol, assembly, type);
         }
+
 
     }
 
