@@ -186,7 +186,11 @@ namespace SOM
         {
             addressablesReady = false;
 
-            if (AddressablesRuntimeProperties.EvaluateString("Addressables.SettingsPath") == null)
+            bool noSettingsPath = AddressablesRuntimeProperties.EvaluateString("Addressables.SettingsPath") == null;
+            bool NoAddressablesDefault = AddressableAssetSettingsDefaultObject.Settings == null;
+
+
+            if (noSettingsPath || NoAddressablesDefault)
             {
                 Debug.Log("Addressables settings not found. Please create Addressables settings in your project.");
                 return;
