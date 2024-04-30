@@ -21,6 +21,7 @@ using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.AddressableAssets.Initialization;
 
 
 
@@ -184,6 +185,12 @@ namespace SOM
         public static void InitalizeAddressables()
         {
             addressablesReady = false;
+
+            if (AddressablesRuntimeProperties.EvaluateString("Addressables.SettingsPath") == null)
+            {
+                Debug.Log("Addressables settings not found. Please create Addressables settings in your project.");
+                return;
+            }
 
             Addressables.InitializeAsync().Completed += OnInitializeComplete;
         }
