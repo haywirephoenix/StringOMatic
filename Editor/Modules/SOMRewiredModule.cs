@@ -13,16 +13,27 @@ using InputManager = Rewired.InputManager;
 
 namespace SOM
 {
-    public class SOMRewiredModule : SOMModule
+
+    public class SOMRewiredCheck
     {
+        const string defineSymbol = "SOM_REWIRED";
+        const string typeString = "Rewired.ReInput, Rewired_Core";
+
         //==================================
         //Initialization
         //==================================
         [InitializeOnLoadMethod]
-        static void CheckForRewired()
+        public static void CheckForRewired()
         {
             SOMUtils.CheckForDefineSymbol(defineSymbol, typeString);
+
         }
+
+    }
+
+#if SOM_REWIRED
+    public class SOMRewiredModule : SOMModule
+    {
 
         //==================================
         //Consts
@@ -35,11 +46,6 @@ namespace SOM
         const string GROUP_LAYOUTS_LABEL = "Group Layouts";
         const string GROUP_LAYOUTS_TOOLTIP = "Group all layouts into a generic \"Layouts\" submodule";
 
-        //==================================
-        //Vars
-        //==================================
-        const string defineSymbol = "SOM_REWIRED";
-        const string typeString = "Rewired.ReInput, Rewired_Core";
 
         //==================================
         //Properties
@@ -80,7 +86,7 @@ namespace SOM
         //===================================
         public override void Refresh()
         {
-#if SOM_REWIRED
+
             //Players
             string playersModule = moduleName + ".Players";
             //SOMDataHandler.AddModule(playersModule);
@@ -184,13 +190,13 @@ namespace SOM
                 }
             }
 
-#else
-			if (SOMDataHandler.ModuleExists(moduleName))
-				SOMDataHandler.RemoveModule(moduleName);
-#endif
+
+            // if (SOMDataHandler.ModuleExists(moduleName))
+            // 	SOMDataHandler.RemoveModule(moduleName);
+
         }
 
-#if SOM_REWIRED
+
 
         bool FindRewiredModule(out InputManager inputManager)
         {
@@ -219,7 +225,7 @@ namespace SOM
         }
 
 
-#endif
+
         void AddNamesTo(string[] names, string module)
         {
             for (int i = 0; i < names.Length; i++)
@@ -229,13 +235,14 @@ namespace SOM
 
         public override void DrawPreferences()
         {
-#if SOM_REWIRED
+
             addCategoriesSuffix = EditorGUILayout.ToggleLeft(new GUIContent(ADD_CATEGORIES_SUFFIX_LABEL, ADD_CATEGORIES_SUFFIX_TOOLTIP), addCategoriesSuffix);
             groupLayouts = EditorGUILayout.ToggleLeft(new GUIContent(GROUP_LAYOUTS_LABEL, GROUP_LAYOUTS_TOOLTIP), groupLayouts);
             base.DrawPreferences();
-#else
-			EditorGUILayout.HelpBox("Rewired is not installed",MessageType.Error);
-#endif
+
+            EditorGUILayout.HelpBox("Rewired is not installed", MessageType.Error);
+
         }
     }
+#endif
 }

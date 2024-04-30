@@ -21,7 +21,7 @@ namespace SOM
 		//Initialization
 		//==================================
 		[InitializeOnLoadMethod]
-		static void CheckForAddressables()
+		public static void CheckForAddressables()
 		{
 			SOMUtils.CheckForDefineSymbol(addressablesDefineSymbol, addressablesTypeString);
 
