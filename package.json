@@ -9,6 +9,7 @@
         "url": "https://github.com/haywirephoenix/StringOMatic/issues"
     },
     "dependencies": {
-        "com.cobo.string-o-matic": "2.0.5"
+        "com.cobo.string-o-matic": "2.0.5",
+        "com.unity.addressables": "1.21.20"
     }
 }
