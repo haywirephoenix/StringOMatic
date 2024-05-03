@@ -1,7 +1,7 @@
 {
     "name": "com.cobo.string-o-matic.rewired-addon",
     "displayName": "String-O-Matic - Rewired",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "author": "Cobo Antonio, Haywire Phoenix",
     "description": "Addon for String-O-Matic that adds the Rewired strings in your project to the constants file",
     "license": "BSD-4",
