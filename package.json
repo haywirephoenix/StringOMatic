@@ -1,0 +1,14 @@
+{
+    "name": "com.cobo.string-o-matic.rewired-addon",
+    "displayName": "String-O-Matic - Rewired",
+    "version": "0.1.0",
+    "description": "Addon for String-O-Matic that adds the Rewired strings in your project to the constants file",
+    "license": "BSD-4",
+    "homepage": "https://github.com/haywirephoenix/StringOMatic/",
+    "bugs": {
+        "url": "https://github.com/haywirephoenix/StringOMatic/issues"
+    },
+    "dependencies": {
+        "com.cobo.string-o-matic": "2.0.5"
+    }
+}
