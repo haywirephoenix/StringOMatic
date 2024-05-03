@@ -5,15 +5,16 @@ namespace SOM
 {
 
     [InitializeOnLoad]
-    public class SOMPackageChecker : AssetPostprocessor
+    public class SOMPackageChecker
     {
 
-        static SOMPackageChecker()
+        [InitializeOnLoadMethod]
+        static void SubscribeToEvent()
         {
-            AssetDatabase.importPackageStarted += OnImportPackageStarted;
+            Events.registeredPackages += RegisteredPackagesEventHandler;
         }
 
-        private static void OnImportPackageStarted(string packagename)
+        static void RegisteredPackagesEventHandler(PackageRegistrationEventArgs packageRegistrationEventArgs)
         {
             SOMAddressableCheck.CheckForAddressables();
             SOMRewiredCheck.CheckForRewired();
