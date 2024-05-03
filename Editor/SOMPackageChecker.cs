@@ -3,16 +3,10 @@ using UnityEditor;
 using UnityEditor.PackageManager;
 namespace SOM
 {
-    public class SOMPackageChecker : UnityEditor.Editor
+    public class SOMPackageChecker : AssetPostprocessor
     {
 
-        [InitializeOnLoadMethod]
-        private static void Initialize()
-        {
-            Events.registeredPackages += OnRegisteredPackages;
-        }
-
-        private static void OnRegisteredPackages(PackageRegistrationEventArgs args)
+        protected void OnPreprocessAsset()
         {
 
             SOMAddressableCheck.CheckForAddressables();
