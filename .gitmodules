@@ -1,0 +1,8 @@
+[submodule "Addons/Addressables"]
+	path = Addons/Addressables
+	url = https://github.com/haywirephoenix/StringOMatic.git
+	branch = addressables-addon
+[submodule "Addons/Rewired"]
+	path = Addons/Rewired
+	url = https://github.com/haywirephoenix/StringOMatic.git
+	branch = rewired-addon
