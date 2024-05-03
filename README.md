@@ -1,3 +1,20 @@
+
+Addon to support [Rewired](https://assetstore.unity.com/packages/tools/utilities/rewired-21676) asset.
+
+If you have the Rewired addon installed, the Rewired module should now be included in the preferences window. 
+When enabled, it will generate constant strings from your Rewired Input manager prefab or gameobject if it finds it. 
+
+The following constants are generated:
+
+* Players
+* Actions
+* Input Behaviours
+* Custom Controllers
+* Layouts
+* Maps
+
+<br/>
+
 <details>
 <summary><b>Rewired Addon Installation</b></summary>
 <br/>
