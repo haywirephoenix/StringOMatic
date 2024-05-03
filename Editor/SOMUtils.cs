@@ -327,8 +327,7 @@ namespace SOM
 			}
 			catch (System.Exception ex)
 			{
-
-				// Debug.LogError("Exception while checking for define symbol: " + defineSymbol + "\n" + ex.Message);
+				Console.WriteLine("Exception while checking for define symbol: " + defineSymbol + "\n" + ex.Message);
 			}
 
 			if (!exists)
