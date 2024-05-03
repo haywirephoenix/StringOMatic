@@ -1,0 +1,14 @@
+{
+    "name": "com.cobo.string-o-matic.addressables-addon",
+    "displayName": "String-O-Matic - addressables",
+    "version": "0.1.0",
+    "description": "Addon for String-O-Matic that adds the Addressables strings in your project to the constants file",
+    "license": "BSD-4",
+    "homepage": "https://github.com/haywirephoenix/StringOMatic/",
+    "bugs": {
+        "url": "https://github.com/haywirephoenix/StringOMatic/issues"
+    },
+    "dependencies": {
+        "com.cobo.string-o-matic": "2.0.5"
+    }
+}
