@@ -9,10 +9,10 @@ namespace SOM
         [InitializeOnLoadMethod]
         private static void Initialize()
         {
-            Events.registeringPackages += OnRegisteringPackages;
+            Events.registeredPackages += OnRegisteredPackages;
         }
 
-        private static void OnRegisteringPackages(PackageRegistrationEventArgs args)
+        private static void OnRegisteredPackages(PackageRegistrationEventArgs args)
         {
 
             SOMAddressableCheck.CheckForAddressables();
