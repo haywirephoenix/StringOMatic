@@ -133,6 +133,8 @@ animator.SetFloat(MyControllerParams.horizontalFullPathHash,x);
 <summary><b>Rewired Addon Installation</b></summary>
 <br/>
 
+Readme: [rewired-addon](https://github.com/haywirephoenix/StringOMatic/tree/rewired-addon)
+
 <b>Please make sure Rewired is installed first.</b>
 
 ### Install from a Git URL
@@ -152,6 +154,8 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 <summary><b>Addressables Addon Installation</b></summary>
 <br/>
 
+Readme: [addressables-addon](https://github.com/haywirephoenix/StringOMatic/tree/addressables-addon)
+
 ### Install from a Git URL
 Yoy can also install this package via Git URL. To load a package from a Git URL:
 
@@ -170,7 +174,7 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 <br/>
 
 
-If you have the Addressables addon installed, the Addressables module should now be included in the preferences window. When enabled, it will generate constant strings from your Addressables: 
+If you have the Addressables addon installed, the Addressables module should now be included in the StringOMatic preferences window. When enabled, it will generate constant strings from your Addressables: 
 
 MainAsset - AddressableAssetEntry.AssetPath, AddressableAssetGroup.Guid
 SubAssets - AddressableAssetEntry.address
@@ -213,7 +217,7 @@ if (handle.Status == AsyncOperationStatus.Succeeded)
 <br/>
 
 >##### v1.1.1:
->* Added a filter list to the Mecanim module
+>* Add a filter list to the Mecanim module
 >* Fix Refresh from reverting animation controller changes
 >* Mechanim module now adds Animator.StringToHash ints
 >* Fix preferences layout and menuitem.
@@ -243,6 +247,9 @@ if (handle.Status == AsyncOperationStatus.Succeeded)
 >##### v2.0.4:
 >* Add addressables support
 >* Add support for multiple constant types
+
+>##### v3.0.0:
+>* Split Addons into seperate branches
 
 </details>
 
