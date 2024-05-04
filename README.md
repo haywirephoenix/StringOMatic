@@ -52,15 +52,17 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 <summary><b>Planned Features</b></summary>
 <br/>
 
-
-- [ ] Add "Update Available" banner with Update button in preferences
-- [ ] Fix filter lists, make universal filter template
-- [ ] Add filter lists for more categories
-- [ ] Add directory selection shortcut
-- [ ] Add whitelist object field
-- [ ] Udate docs for module creation in the new format
-- [x] Add Addressables feature (Complete - in testing)
-- [x] Add support for multiple constant types (Complete)
+- [ ] FilterList global class
+- [ ] FilterList for more categories
+- [ ] FilterList path fields
+- [ ] FilterList object fields
+- [ ] Custom module template repo
+- [ ] Custom namespace name fields for modules?
+- [ ] Docs for module creation in the new format
+- [ ] Update banner with Update button in preferences
+- [ ] Revisit Addressables IResource constant
+- [x] Addressables feature (Complete)
+- [x] Support for multiple constant types (Complete)
 - [x] Support package manager git url (Complete)
 - [x] Animator hash generation (Complete)
 - [x] Improved compatibility with newer versions of Unity (Complete)
