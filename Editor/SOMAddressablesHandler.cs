@@ -28,7 +28,6 @@ namespace SOM
     public static class SOMAddressablesHandler
     {
 
-
         public const string AddressablesModule = "AddressablesModule";
         public const string ClassName = "Addressables";
 
@@ -41,8 +40,6 @@ namespace SOM
                 string builtPath = pathBuilder.ToString().TrimEnd(_dotChar);
 
                 string classPath = string.Join(_dotChar, NamespaceName, AddressablesModule, builtPath, constName);
-
-
 
                 SOMDataHandler.Singleton.AddIResource(resourceLocation.PrimaryKey, classPath);
                 SOMDataHandler.Singleton.IResourcesNeedAssigning = true;
@@ -236,22 +233,44 @@ namespace SOM
             List<AddressableAssetEntry> results = new List<AddressableAssetEntry>();
             group.GatherAllAssets(results, true, true, true);
 
+            var parentAssets = new HashSet<AddressableAssetEntry>();
+
             foreach (var asset in results)
             {
-                if (!asset.IsSubAsset)
+                if (asset.ParentEntry != null)
                 {
-                    ProcessMainAsset(asset, groupName, locationsDict);
+                    if (!parentAssets.Contains(asset.ParentEntry))
+                    {
+                        parentAssets.Add(asset.ParentEntry);
+                        ProcessParentAsset(asset.ParentEntry, groupName, locationsDict);
+                    }
+
+                    string parentFileName = Path.GetFileName(asset.ParentEntry.address).Replace('.', '_');
+
+                    ProcessSubAsset(asset, groupName + '.' + parentFileName, true);
+
                 }
                 else
                 {
-                    ProcessSubAsset(asset, groupName);
+
+                    ProcessSubAsset(asset, groupName, false);
                 }
+
             }
+
         }
 
-        private static void ProcessMainAsset(AddressableAssetEntry asset, string groupName, Dictionary<System.Guid, IList<IResourceLocation>> locationsDict)
+        private static void ProcessParentAsset(AddressableAssetEntry asset, string groupName, Dictionary<System.Guid, IList<IResourceLocation>> locationsDict)
         {
+
             string assetPath = asset.AssetPath;
+
+            if (string.IsNullOrEmpty(assetPath))
+            {
+                Debug.Log("asset path null on" + asset.address);
+                return;
+            }
+
             string guidString = asset.parentGroup.Guid;
 
             if (!Guid.TryParse(guidString, out System.Guid guid))
@@ -260,29 +279,41 @@ namespace SOM
                 return;
             }
 
-            string constPath = $"{ClassName}.{groupName}";
+            if (string.IsNullOrEmpty(groupName))
+                groupName = "GROUP_UNKNOWN";
 
-            SOMDataHandler.AddConstant(constPath, "GUID", guidString);
+            string fileName = Path.GetFileName(asset.address).Replace('.', '_');
+
+            string constPath = $"{ClassName}.{groupName}.{fileName}";
+
+            if (!string.IsNullOrEmpty(guidString))
+                SOMDataHandler.AddConstant(constPath, "GUID", guidString);
+
+            // Debug.Log("trying to add " + constPath + " " + assetPath);
+
             SOMDataHandler.AddConstant(constPath, "MainAssetPath", assetPath);
 
 
-            var assetGUID = Guid.Parse(asset.guid);
-            var foundResourceLoc = SOMAddressablesUtility.FindResourceDict(assetGUID, locationsDict, asset.address);
+            // var assetGUID = Guid.Parse(asset.guid);
+            // var foundResourceLoc = SOMAddressablesUtility.FindResourceDict(assetGUID, locationsDict, asset.address);
 
-            if (foundResourceLoc != null)
-            {
-                SOMDataHandler.AddConstant(constPath, "iResourceLocation", foundResourceLoc);
-            }
+            // if (foundResourceLoc != null)
+            // {
+            //     // SOMDataHandler.AddConstant(constPath, "iResourceLocation", foundResourceLoc);
+            // }
         }
 
-        private static void ProcessSubAsset(AddressableAssetEntry asset, string groupName)
+        private static void ProcessSubAsset(AddressableAssetEntry asset, string groupName, bool isSubAsset)
         {
             string parentAssetPath = asset.AssetPath;
             UnityEngine.Object subAsset = asset.TargetAsset;
             string subAssetName = subAsset.name;
             string subAssetType = asset.TargetAsset.GetType().Name;
 
-            string constPath = $"{ClassName}.{groupName}.SubAssets";
+            string constPath = $"{ClassName}.{groupName}";
+
+            if (isSubAsset) constPath += ".SubAssets";
+
             string constName = $"{subAssetName}{subAssetType}";
             string constValue = asset.address;
 
