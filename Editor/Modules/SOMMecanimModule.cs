@@ -295,7 +295,7 @@ namespace SOM
 		}
 
 		//Given a state machine, this module adds all of its states and sub state machines
-		void AddStateMachineRecursive(AnimatorStateMachine stateMachine, string ownerModule, string layerName)
+		void AddStateMachineRecursive(AnimatorStateMachine stateMachine, string ownerModule, string layerName, string currentPath = "")
 		{
 			//Add a constant for every state
 			if (addStates)
@@ -314,12 +314,15 @@ namespace SOM
 
 						if (addAnimatorInts)
 						{
-							string fullPath = $"{layerName}.{stateName}";
+							// Build the full path including any parent state machines
+							string fullPath = string.IsNullOrEmpty(currentPath)
+								? $"{layerName}.{stateName}"
+								: $"{layerName}.{currentPath}.{stateName}";
+
 							int fullpathHash = Animator.StringToHash(fullPath);
 
 							SOMDataHandler.AddConstant(statesModule, niceStateName + "NameHash", state.nameHash);
 							SOMDataHandler.AddConstant(statesModule, niceStateName + "FullPathHash", fullpathHash);
-
 						}
 					}
 				}
@@ -343,24 +346,30 @@ namespace SOM
 						//Its name...
 						if (addStateMachineName)
 						{
-
 							SOMDataHandler.AddConstant(stateMachineModule, "name", stateMachineName);
 
 							if (addAnimatorInts)
 							{
-								string fullPath = $"{layerName}.{stateMachineName}";
+								// Build the full path including any parent state machines
+								string fullPath = string.IsNullOrEmpty(currentPath)
+									? $"{layerName}.{stateMachineName}"
+									: $"{layerName}.{currentPath}.{stateMachineName}";
 
 								SOMDataHandler.AddConstant(stateMachineModule, "NameHash", Animator.StringToHash(stateMachineName));
 								SOMDataHandler.AddConstant(stateMachineModule, "FullPathHash", Animator.StringToHash(fullPath));
 							}
 						}
-						//And all of its states
-						AddStateMachineRecursive(stateMachine.stateMachines[i].stateMachine, stateMachineModule, layerName);
+
+						// Calculate the new path for child state machines
+						string newPath = string.IsNullOrEmpty(currentPath)
+							? stateMachineName
+							: $"{currentPath}.{stateMachineName}";
+
+						//And all of its states - pass the updated path
+						AddStateMachineRecursive(childStateMachine, stateMachineModule, layerName, newPath);
 					}
 				}
 			}
-
-
 		}
 
 		// bool addAnimatorInts = true;

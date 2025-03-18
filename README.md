@@ -1,5 +1,4 @@
- ![Title](https://github.com/haywirephoenix/StringOMatic/assets/26271795/23f7876c-90c9-4751-bb13-929804c7064d)  
-
+![Title](https://github.com/haywirephoenix/StringOMatic/assets/26271795/23f7876c-90c9-4751-bb13-929804c7064d)
 
 With String-O-Matic, magic strings are over. Generate all your constants at the click of a button.
 
@@ -70,7 +69,6 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 - [x] Remove XML intermediary generation (Complete)
 - [x] Improve performance (Complete)
 
-
 </details>
 
 <details>
@@ -78,13 +76,14 @@ With String-O-Matic, magic strings are over. Generate all your constants at the 
 <br/>
 
 ### Install from a Git URL
+
 Yoy can also install this package via Git URL. To load a package from a Git URL:
 
-* Open [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui.html) window.
-* Click the add **+** button in the status bar.
-* The options for adding packages appear.
-* Select Add package from git URL from the add menu. A text box and an Add button appear.
-* Enter the `https://github.com/haywirephoenix/StringOMatic.git` Git URL in the text box and click Add.
+- Open [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui.html) window.
+- Click the add **+** button in the status bar.
+- The options for adding packages appear.
+- Select Add package from git URL from the add menu. A text box and an Add button appear.
+- Enter the `https://github.com/haywirephoenix/StringOMatic.git` Git URL in the text box and click Add.
 
 <br/>
 </details>
@@ -93,15 +92,14 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 <summary><b>Getting Started</b></summary>
 <br/>
 
-* Open Preferences > String-O-Matic or Tools > String-O-Matic > Preferences
-* Toggle the modules that you want to generate - click on them as some have more sub options.
-* Toggle any of the customization options at the top if you would like to change them.
-* Press the Refresh All button at the bottom.
-* Your new consts file will be generated in your project.
+- Open Preferences > String-O-Matic or Tools > String-O-Matic > Preferences
+- Toggle the modules that you want to generate - click on them as some have more sub options.
+- Toggle any of the customization options at the top if you would like to change them.
+- Press the Refresh All button at the bottom.
+- Your new consts file will be generated in your project.
 
 <br/>
 </details>
-
 
 <details>
 <summary><b>Usage</b></summary>
@@ -110,19 +108,26 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 Once you've generated your constants, in your project you will have access to all the module classes.
 
 If you used the "Wrap modules in namespaces" option:
-```csharp 
+
+```csharp
 using StringOMatic.InputModule;
 ```
+
 Then you can access them like this:
-```csharp 
+
+```csharp
 Input.GetAxis(InputStatics.horizontal)
 ```
+
 Or you can create a shortcut to a specific class:
-```csharp 
+
+```csharp
 using MyControllerParams = StringOMatic.MecanimModule.MecanimStatics.Controllers.MyController.Parameters;
 ```
+
 Then you can reference them like this:
-```csharp 
+
+```csharp
 animator.SetFloat(MyControllerParams.horizontalFullPathHash,x);
 ```
 
@@ -138,17 +143,17 @@ Readme: [rewired-addon](https://github.com/haywirephoenix/StringOMatic/tree/rewi
 <b>Please make sure Rewired is installed first.</b>
 
 ### Install from a Git URL
+
 Yoy can also install this package via Git URL. To load a package from a Git URL:
 
-* Open [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui.html) window.
-* Click the add **+** button in the status bar.
-* The options for adding packages appear.
-* Select Add package from git URL from the add menu. A text box and an Add button appear.
-* Enter the `https://github.com/haywirephoenix/StringOMatic.git#rewired-addon` Git URL in the text box and click Add.
+- Open [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui.html) window.
+- Click the add **+** button in the status bar.
+- The options for adding packages appear.
+- Select Add package from git URL from the add menu. A text box and an Add button appear.
+- Enter the `https://github.com/haywirephoenix/StringOMatic.git#rewired-addon` Git URL in the text box and click Add.
 
 <br/>
 </details>
-
 
 <details>
 <summary><b>Addressables Addon Installation</b></summary>
@@ -157,24 +162,23 @@ Yoy can also install this package via Git URL. To load a package from a Git URL:
 Readme: [addressables-addon](https://github.com/haywirephoenix/StringOMatic/tree/addressables-addon)
 
 ### Install from a Git URL
+
 Yoy can also install this package via Git URL. To load a package from a Git URL:
 
-* Open [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui.html) window.
-* Click the add **+** button in the status bar.
-* The options for adding packages appear.
-* Select Add package from git URL from the add menu. A text box and an Add button appear.
-* Enter the `https://github.com/haywirephoenix/StringOMatic.git#addressables-addon` Git URL in the text box and click Add.
+- Open [Unity Package Manager](https://docs.unity3d.com/Manual/upm-ui.html) window.
+- Click the add **+** button in the status bar.
+- The options for adding packages appear.
+- Select Add package from git URL from the add menu. A text box and an Add button appear.
+- Enter the `https://github.com/haywirephoenix/StringOMatic.git#addressables-addon` Git URL in the text box and click Add.
 
 <br/>
 </details>
-
 
 <details>
 <summary><b>Addressables Usage</b></summary>
 <br/>
 
-
-If you have the Addressables addon installed, the Addressables module should now be included in the StringOMatic preferences window. When enabled, it will generate constant strings from your Addressables: 
+If you have the Addressables addon installed, the Addressables module should now be included in the StringOMatic preferences window. When enabled, it will generate constant strings from your Addressables:
 
 MainAsset - AddressableAssetEntry.AssetPath, AddressableAssetGroup.Guid
 SubAssets - AddressableAssetEntry.address
@@ -198,14 +202,14 @@ if (handle.Status == AsyncOperationStatus.Succeeded)
 
 Loading a SubAsset (for example an animationclip in a bundled fbx):
 
-```csharp 
+```csharp
 var handle = Addressables.LoadAssetAsync<AnimationClip>(AddressablesStatics.MyAnimations.SubAssets.myanimationClip);
 
 await handle.Task;
 
 if (handle.Status == AsyncOperationStatus.Succeeded)
 {
-    AnimationClip myanimationClip = handle.Result;   
+    AnimationClip myanimationClip = handle.Result;
 }
 ```
 
@@ -216,40 +220,50 @@ if (handle.Status == AsyncOperationStatus.Succeeded)
 <summary><b>Updates</b></summary>
 <br/>
 
->##### v1.1.1:
->* Add a filter list to the Mecanim module
->* Fix Refresh from reverting animation controller changes
->* Mechanim module now adds Animator.StringToHash ints
->* Fix preferences layout and menuitem.
->* Add github repo button to preferences
->##
+> ##### v1.1.1:
+>
+> - Add a filter list to the Mecanim module
+> - Fix Refresh from reverting animation controller changes
+> - Mechanim module now adds Animator.StringToHash ints
+> - Fix preferences layout and menuitem.
+> - Add github repo button to preferences
+>
+> ##
 
->##### v2.0.0:
->* Update C# generation - completely rewritten
->* Update StringToHash int generation
->* Remove XML generation intermediary step
->* Add namespace generation to modules with "Module" suffix
+> ##### v2.0.0:
+>
+> - Update C# generation - completely rewritten
+> - Update StringToHash int generation
+> - Remove XML generation intermediary step
+> - Add namespace generation to modules with "Module" suffix
 
->* Create new data structure for storing and generating constants
->* Update all modules to support new structure
->* Update Rewired module to search for InputManager prefab or scene
->* Upate Resources module - new project scanning and const gen approach
+> - Create new data structure for storing and generating constants
+> - Update all modules to support new structure
+> - Update Rewired module to search for InputManager prefab or scene
+> - Upate Resources module - new project scanning and const gen approach
 
->* Update Preferences UI + current and backwards compatibility
->* Add new fields to Preferences UI to customize Path, Class and Namespace
->* Fix MenuItem methods, with backwards compatibility
->* New and improved Animator Hash generation
+> - Update Preferences UI + current and backwards compatibility
+> - Add new fields to Preferences UI to customize Path, Class and Namespace
+> - Fix MenuItem methods, with backwards compatibility
+> - New and improved Animator Hash generation
 
->##### v2.0.1 - 2.0.3:
->* Fix minor bugs
->* Add package manager support
+> ##### v2.0.1 - 2.0.3:
+>
+> - Fix minor bugs
+> - Add package manager support
 
->##### v2.0.4:
->* Add addressables support
->* Add support for multiple constant types
+> ##### v2.0.4:
+>
+> - Add addressables support
+> - Add support for multiple constant types
 
->##### v3.0.0:
->* Split Addons into seperate branches
+> ##### v3.0.0:
+>
+> - Split Addons into seperate branches
+
+> ##### v3.0.1:
+>
+> - Fix fullPathHash in MechanimModule
 
 </details>
 

@@ -1,7 +1,7 @@
 {
     "name": "com.cobo.string-o-matic",
     "displayName": "String-O-Matic",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "author": "Cobo Antonio, Haywire Phoenix",
     "description": "String-O-Matic scans your project based on your needs to automatically generate constants and static classes holding references to all of those magic strings, effectively replacing soft runtime errors by robust compile errors.",
     "license": "BSD-4",
